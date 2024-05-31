@@ -1,10 +1,10 @@
-import { ApiResponse, HttpClientData } from '@/index.d'
+import { ApiResponse, HttpClientData } from './types'
 export default class FivlogError extends Error {
-    statusCode?: number
+    statusCode?: number | null
     apiResponse?: ApiResponse
     httpClientData?: HttpClientData
 
-    constructor(message: string, statusCode?: number, apiResponse?: ApiResponse, httppClientData?: HttpClientData) {
+    constructor(message: string, statusCode?: number | null, apiResponse?: ApiResponse, httppClientData?: HttpClientData) {
         super(message)
         this.statusCode = statusCode
         this.apiResponse = apiResponse
