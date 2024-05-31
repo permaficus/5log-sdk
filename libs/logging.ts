@@ -1,35 +1,40 @@
 /**
- * 
- * 
+ *  5Log API Config Init
+ *  
+ *  by: permaficus<https://github.com/permaficus>
  */
 
 import HttpClient from "./httpClient"
-import type { ErrorPayload } from "./types"
+import type { ErrorPayload, FivLogInitConfig } from "./types"
 
 class Logging {
-    private client_id: string
-    private url: string
+    private args: FivLogInitConfig
 
-   constructor(client_id: string, url: string) {
-        this.client_id = client_id
-        this.url = url
+   constructor(args: FivLogInitConfig) {
+        this.args = args
     }
     /**
-     * ErrorPayload: object
+     ** ErrorPayload type: object
      * 
      * @param error
      * @example
      * {
      *   logLevel: 'ERROR',
-     *   logTicket: {{random_string}}
-     *   
+     *   logTicket: {{uuid}} (*) optional
+     *   eventCode: 'QR-8493' or HTTP Status code (eg: 400, 401, 500)',
+     *   environment: 'Development',
+     *   source: {
+     *      app_name: 'project_name',
+     *      app_version: 'package-version',
+     *      package_name: 'project/package_name'
+     *   },
+     *   errorDescription: 'error-message'
      * }
-     * @returns 
      */
-    write (error: ErrorPayload) {
-        const connector = new HttpClient(this.client_id, this.url);
-        return connector.send(error)
+    write (error: ErrorPayload): void {
+        const connector = new HttpClient(this.args.client_id, this.args.url);
+        connector.send(error)
     }
 }
 
-export { Logging, ErrorPayload } 
+export { Logging } 

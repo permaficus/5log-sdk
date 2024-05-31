@@ -4,7 +4,6 @@
   "description": "SDK for 5Log Bug Tracking & Error Logger",
   "author": "permaficus<abukhalif2019@gmail.com",
   "main": "dist/index.js",
-  "types": "dist/libs/types.d.ts",
   "files": [
     "dist",
     "package.json",
