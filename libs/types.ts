@@ -10,10 +10,13 @@ export type ErrorSourceProps = {
 export type ErrorPayload = {
     logLevel: 'ERROR' | 'WARNING' | 'INFO'
     logTicket: string
-    logDate: Date
     source: object | ErrorSourceProps
     eventCode: string
     destination?: string
     environment: string
     errorDescription: string
+}
+export type FivLogInitConfig = {
+    client_id: string
+    url: string
 }

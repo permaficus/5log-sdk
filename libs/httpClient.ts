@@ -26,7 +26,8 @@ export default class HttpClient {
             headers: { ...this.defaultHeaders, client_id: this.client_id},
             data: payload
         }).catch((error: any) => {
-            throw new FivlogError(error.message, error.response.data.code, error.response.data, null)
+            console.error(new FivlogError(error.message, error.response.data.code, error.response.data, null))
+            return;
         })
     };
 }
