@@ -16,7 +16,7 @@ npm i --save 5log-sdk
 #### 👉 Usage
 ```javascript
 // ES6
-import { Logging } from '5log-sdk'
+import { filog } from '5log-sdk'
 
 // init
 const log = new Logging({
