@@ -2,13 +2,18 @@ import { ApiResponse, HttpClientData } from './types'
 export default class FilogError extends Error {
     statusCode?: number | null
     apiResponse?: ApiResponse
-    httpClientData?: HttpClientData
+    rawError?: Error | null
 
-    constructor(message: string, statusCode?: number | null, apiResponse?: ApiResponse, httppClientData?: HttpClientData) {
+    constructor(
+        message: string, 
+        statusCode?: number | null, 
+        apiResponse?: ApiResponse, 
+        rawError?: Error | null
+    ) {
         super(message)
         this.statusCode = statusCode
         this.apiResponse = apiResponse
-        this.httpClientData = httppClientData
+        this.rawError = rawError
         this.name = this.constructor.name
 
         Object.setPrototypeOf(this, FilogError.prototype)
