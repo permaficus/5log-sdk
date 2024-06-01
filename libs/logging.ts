@@ -9,7 +9,10 @@ import type { ErrorPayload, FilogInitObject, FilogTransportConfig } from "./type
 
 class filog {
     private args: FilogTransportConfig
-
+    /**
+     *
+     * @param {array} args - Argument must be an array value
+     */
    constructor(args: FilogTransportConfig) {
         this.args = args
     }
