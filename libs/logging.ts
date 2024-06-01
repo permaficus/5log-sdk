@@ -34,7 +34,10 @@ class filog {
      * }
      */
     write (error: ErrorPayload): void {
-        const transport: FilogInitObject[] = this.args.filter((field: FilogInitObject) => field.logType === error.logLevel)
+        let transport: FilogInitObject[] = this.args.filter((field: FilogInitObject) => field.logType === error.logLevel)
+        if (transport.length === 0) {
+            transport = this.args.filter((field: FilogInitObject) => field.logType === 'ANY')
+        }
         const connector = new HttpClient(transport[0].client_id, transport[0].url);
         connector.send(error)
     }
