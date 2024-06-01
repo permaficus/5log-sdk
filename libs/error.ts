@@ -1,5 +1,5 @@
 import { ApiResponse, HttpClientData } from './types'
-export default class FivlogError extends Error {
+export default class FilogError extends Error {
     statusCode?: number | null
     apiResponse?: ApiResponse
     httpClientData?: HttpClientData
@@ -11,6 +11,6 @@ export default class FivlogError extends Error {
         this.httpClientData = httppClientData
         this.name = this.constructor.name
 
-        Object.setPrototypeOf(this, FivlogError.prototype)
+        Object.setPrototypeOf(this, FilogError.prototype)
     }
 }

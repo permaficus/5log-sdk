@@ -8,7 +8,7 @@ export type ErrorSourceProps = {
     ip_address?: string
 }
 export type ErrorPayload = {
-    logLevel: 'ERROR' | 'WARNING' | 'INFO'
+    logLevel: 'ERROR' | 'WARNING' | 'DEBUG' | 'INFO'
     logTicket: string
     source: object | ErrorSourceProps
     eventCode: string
@@ -16,7 +16,9 @@ export type ErrorPayload = {
     environment: string
     errorDescription: string
 }
-export type FivLogInitConfig = {
+export type FilogInitObject = {
     client_id: string
     url: string
+    logType: 'ANY' | 'ERROR' | 'WARNING' | 'DEBUG' | 'INFO'
 }
+export type FilogTransportConfig = Array<FilogInitObject>
