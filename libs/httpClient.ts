@@ -23,12 +23,6 @@ export default class HttpClient {
 
     send =  async (payload: ErrorPayload): Promise<void> => {
         const instance = this;
-        let originalError: any = null;
-
-        if (payload.errorDescription instanceof Error) {
-            originalError = payload.errorDescription;
-            payload.errorDescription = payload.errorDescription.message;
-        }
         await instance.httpClient({
             url: this.target,
             method: 'POST',
@@ -39,7 +33,7 @@ export default class HttpClient {
                 console.log(chalk.redBright(`[5log-SDK] Error: Can not connect to ${error.config.url}`));
                 return;
             }
-            console.error(new FilogError(error.message, error.response.data.code, error.response.data, originalError));
+            console.error(new FilogError(error.message, error.response.data.code, error.response.data));
             return;
         })
     };
