@@ -14,7 +14,7 @@ export type ErrorPayload = {
     eventCode: string
     destination?: string
     environment: string
-    errorDescription: string
+    errorDescription: string | any
 }
 export type FilogInitObject = {
     client_id: string

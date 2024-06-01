@@ -1,6 +1,8 @@
 import axios, { type AxiosInstance } from 'axios';
 import FilogError from './error';
 import * as pkgJson from '../package.json'
+import chalk from 'chalk'
+import { ErrorPayload } from './types';
 
 export default class HttpClient {
     private client_id: string
@@ -19,15 +21,25 @@ export default class HttpClient {
         this.httpClient = axios.create()
     }
 
-    send =  async (payload: object): Promise<void> => {
+    send =  async (payload: ErrorPayload): Promise<void> => {
         const instance = this;
+        let originalError: any = null;
+
+        if (payload.errorDescription instanceof Error) {
+            originalError = payload.errorDescription;
+            payload.errorDescription = payload.errorDescription.message;
+        }
         await instance.httpClient({
             url: this.target,
             method: 'POST',
             headers: { ...this.defaultHeaders, client_id: this.client_id},
             data: payload
         }).catch((error: any) => {
-            console.error(new FilogError(error.message, error.response.data.code, error.response.data, null));
+            if (error.code === 'ECONNREFUSED') {
+                console.log(chalk.redBright(`[5log-SDK] Error: Can not connect to ${error.config.url}`));
+                return;
+            }
+            console.error(new FilogError(error.message, error.response.data.code, error.response.data, originalError));
             return;
         })
     };
