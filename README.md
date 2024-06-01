@@ -19,10 +19,11 @@ npm i --save 5log-sdk
 import { filog } from '5log-sdk'
 
 // init
-const log = new Logging({
-    client_id: {{your-client-id}},
-    url: {{api-url}}
-})
+const log = new Logging([
+    { client_id: '{your-client-id}', url: 'https://logs.devops.io/api/v1/logs', logType: 'ANY' }
+    // if you want to separate log into different api service you can add more options
+    { client_id: '{your-client-id}', url: 'https://error.devops.io/api/v1/logs', logType: 'ERROR' }
+])
 
 // Test Scenario
 function JsonParse (value) {
@@ -32,12 +33,12 @@ function JsonParse (value) {
         log.write({
             logLevel: 'ERROR',
             source: {
-                app_name: {{your-app-name}},
-                package_name: {{your-package-name}},
-                app_version: {{app-version}},
+                app_name: '{{your-app-name}}',
+                package_name: '{{your-package-name}}',
+                app_version: '{{app-version}}',
             },
             errorDescription: error.message,
-            environment: {{your-environment}},
+            environment: '{{your-environment}}',
             eventCode: 'ERR-2180'
         })
     }
