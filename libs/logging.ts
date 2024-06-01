@@ -5,18 +5,18 @@
  */
 
 import HttpClient from "./httpClient"
-import type { ErrorPayload, FivLogInitConfig } from "./types"
+import type { ErrorPayload, FilogInitObject, FilogTransportConfig } from "./types"
 
-class Logging {
-    private args: FivLogInitConfig
+class filog {
+    private args: FilogTransportConfig
 
-   constructor(args: FivLogInitConfig) {
+   constructor(args: FilogTransportConfig) {
         this.args = args
     }
     /**
-     ** ErrorPayload type: object
+     * Storing / write all the error into the target API
      * 
-     * @param error
+     * @param {Object} error
      * @example
      * {
      *   logLevel: 'ERROR',
@@ -32,9 +32,10 @@ class Logging {
      * }
      */
     write (error: ErrorPayload): void {
-        const connector = new HttpClient(this.args.client_id, this.args.url);
+        const transport: FilogInitObject[] = this.args.filter((field: FilogInitObject) => field.logType === error.logLevel)
+        const connector = new HttpClient(transport[0].client_id, transport[0].url);
         connector.send(error)
     }
 }
 
-export { Logging } 
+export { filog } 

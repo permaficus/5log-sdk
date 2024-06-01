@@ -1,10 +1,11 @@
 import axios, { type AxiosInstance } from 'axios';
-import FivlogError from './error';
+import FilogError from './error';
+import * as pkgJson from '../package.json'
 
 export default class HttpClient {
     private client_id: string
     private defaultHeaders: object
-    private transport: AxiosInstance
+    private httpClient: AxiosInstance
     private target: string
 
     constructor(client_id: string, target: string) {
@@ -12,21 +13,21 @@ export default class HttpClient {
         this.defaultHeaders = {
             'content-type': 'application/json',
             'accept': 'application/json',
-            'user-agent': 'fivelog-client/0.0.1'
+            'user-agent': `filog-client/${pkgJson.version}`
         }
         this.target = target
-        this.transport = axios.create()
+        this.httpClient = axios.create()
     }
 
     send =  async (payload: object): Promise<void> => {
         const instance = this;
-        await instance.transport({
+        await instance.httpClient({
             url: this.target,
             method: 'POST',
             headers: { ...this.defaultHeaders, client_id: this.client_id},
             data: payload
         }).catch((error: any) => {
-            console.error(new FivlogError(error.message, error.response.data.code, error.response.data, null))
+            console.error(new FilogError(error.message, error.response.data.code, error.response.data, null));
             return;
         })
     };
