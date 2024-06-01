@@ -14,14 +14,13 @@ class filog {
         this.args = args
     }
     /**
-     * Storing / write all the error into the target API
-     * 
-     * @param {Object} error
+     * Send this error payload to API service
+     * @param {ErrorPayload} error - See example
      * @example
      * {
      *   logLevel: 'ERROR',
-     *   logTicket: {{uuid}} (*) optional
-     *   eventCode: 'QR-8493' or HTTP Status code (eg: 400, 401, 500)',
+     *   logTicket: '{{uuid}}',
+     *   eventCode: 'QR-8493',
      *   environment: 'Development',
      *   source: {
      *      app_name: 'project_name',
