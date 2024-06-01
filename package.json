@@ -2,7 +2,7 @@
   "name": "5log-sdk",
   "version": "0.0.1",
   "description": "SDK for 5Log Bug Tracking & Error Logger",
-  "author": "permaficus<abukhalif2019@gmail.com",
+  "author": "permaficus<abukhalif2019@gmail.com>",
   "main": "dist/index.js",
   "files": [
     "dist",
@@ -12,8 +12,7 @@
   ],
   "scripts": {
     "build": "rm -rf dist && npm run build:esm",
-    "build:esm": "tsc",
-    "test": "nodemon index.ts"
+    "build:esm": "tsc"
   },
   "repository": {
     "type": "git",
