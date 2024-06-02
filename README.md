@@ -72,5 +72,5 @@ log.errorListener({
     app_version: '1.0.0'
 })
 
-...your code goes below...
+// your code goes here
 ```
