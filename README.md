@@ -37,9 +37,13 @@ function JsonParse (value) {
                 package_name: '{{your-package-name}}',
                 app_version: '{{app-version}}',
             },
-            errorDescription: error.message,
+            errorDescription: error,
             environment: '{{your-environment}}',
             eventCode: 'ERR-2180'
+        }, { 
+            // options for printout original error and error print out
+            verbose: 'true', 
+            originalError: error
         })
     }
 }
