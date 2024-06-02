@@ -7,12 +7,14 @@
 import HttpClient from "./httpClient"
 import type { 
     ErrorPayload, 
+    ErrorSourceProps, 
     ExtraWriteArguments, 
     FilogInitObject, 
     FilogTransportConfig
 } from "./types"
 import * as stp from "stacktrace-parser"
 import chalk from "chalk"
+import Crypto from "crypto"
 
 class filog {
     private args: FilogTransportConfig
@@ -24,10 +26,65 @@ class filog {
         this.args = args
     }
     /**
-     * Send this error payload to API service
-     * @param {ErrorPayload} error - See example
-     * @param {Object} {object} - Properties: default = { verbose: false, originalError: error }
-     * @example
+     * Handle uncaught exception, unhandled rejection and other
+     * error that not catch by the try/catch method
+     * 
+     * #### Usage:
+     * 
+     * ```
+     * import { filog } from '5log-sdk';
+     * const logger = new filog([
+     *   { 
+     *      client_id: 'your-client-id', 
+     *      url: 'https://logs.devops.io/api/v1/logs',
+     *      logType: 'ANY'
+     *   }
+     * ]);
+     * 
+     * logger.errorListener({
+     *   package_name: 'your-app-name',
+     *   app_version: '1.0.0'
+     * })
+     * ```
+     * For more documentation visit: https://github.com/permaficus/5log-sdk#readme
+     */
+    errorListener (source: ErrorSourceProps) {
+        process.on('uncaughtException', (error: Error) => {
+            this.listenerWrite({
+                error,
+                eventCode: 'uncaughtException',
+                source
+            })
+        });
+        process.on('unhandledRejection', (error: Error) => {
+            this.listenerWrite({
+                error,
+                eventCode: 'unhandledRejection',
+                source
+            })
+        })
+    }
+    private listenerWrite ({ error, eventCode, source }: 
+        { error: Error, eventCode: 'uncaughtException' | 'unhandledRejection', source: ErrorSourceProps }
+    ) {
+        this.write({
+            logLevel: 'ERROR',
+            errorDescription: error,
+            eventCode,
+            logTicket: Crypto.randomUUID(),
+            environment: 'Development',
+            source
+        }, {
+            verbose: 'true',
+            originalError: error
+        })
+    }
+    /**
+     * Sending error payload to API service
+     * 
+     * #### Example Payload:
+     * 
+     * ```
      * {
      *   logLevel: 'ERROR',
      *   logTicket: '{{uuid}}',
@@ -40,6 +97,7 @@ class filog {
      *   },
      *   errorDescription: error
      * }
+     * ```
      */
     write (error: ErrorPayload, { verbose, originalError }: ExtraWriteArguments): void {
 
