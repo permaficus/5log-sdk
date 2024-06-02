@@ -22,3 +22,7 @@ export type FilogInitObject = {
     logType: 'ANY' | 'ERROR' | 'WARNING' | 'DEBUG' | 'INFO'
 }
 export type FilogTransportConfig = Array<FilogInitObject>
+export type ExtraWriteArguments = {
+    verbose?: 'true' | 'false' | undefined
+    originalError?: Error | null
+}
