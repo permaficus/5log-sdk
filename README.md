@@ -51,4 +51,26 @@ function JsonParse (value) {
 JsonParse("{a;b}");
 ```
 
+#### Handling Uncaught Exception & Unhandled Rejection
 
+```javascript
+// ES6
+import { filog } from '5log-sdk'
+
+// init
+const log = new Logging([
+    { 
+        client_id: '{your-client-id}', 
+        url: 'https://logs.devops.io/api/v1/logs',
+        logType: 'ANY' 
+    }
+])
+
+// Start by listening for any errors that might occur.
+log.errorListener({
+    package_name: 'your-app-name',
+    app_version: '1.0.0'
+})
+
+...your code goes below...
+```
