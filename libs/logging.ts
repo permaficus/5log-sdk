@@ -19,8 +19,8 @@ import Crypto from "crypto"
 class filog {
     private args: FilogTransportConfig
     /**
-     *
-     * @param {array} args - Argument must be an array value
+     * Has two functions for error listener and log writer. Filog arguments must be an array type
+     * @param {Array} args - example [{ client_id, url, logtype }]
      */
    constructor(args: FilogTransportConfig) {
         this.args = args
@@ -84,7 +84,7 @@ class filog {
      * 
      * #### Example Payload:
      * 
-     * ```
+     * ```javascript
      * {
      *   logLevel: 'ERROR',
      *   logTicket: '{{uuid}}',
@@ -119,6 +119,8 @@ class filog {
             _errorDescription = _errorDescription + `\xa0\xa0\xa0[${rawObjectStack[1].methodName}] ${rawObjectStack[1].file}:${rawObjectStack[1].lineNumber}:${rawObjectStack[1].column}`
             // update errorDescription
             error.errorDescription = _errorDescription
+        } else {
+            _errorDescription = error.errorDescription
         }
 
         if (verbose === 'true') console.log(chalk.redBright(`\n${_errorDescription}\n`))
