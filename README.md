@@ -74,3 +74,7 @@ log.errorListener({
 
 // your code goes here
 ```
+
+#### In Project Example
+
+Please refer to this [Example](https://github.com/permaficus/5log-sdk/tree/main/example) for more usage in real projects
