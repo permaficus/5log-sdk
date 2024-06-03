@@ -4,7 +4,7 @@ import appPkg from './package.json' with { type: 'json' }
 import Crypto from 'crypto'
 
 const logger = new filog([
-    { client_id: 'express-id', url: 'http://localhost:3007/api/v1/logs', logType: 'ANY' }
+    { client_id: 'express-id', url: 'http://logs.devops.local/api/v1/logs', logType: 'ANY' }
 ])
 // handle uncaught exception // unhandled rejection
 logger.errorListener({
