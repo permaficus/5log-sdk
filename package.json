@@ -1,6 +1,6 @@
 {
   "name": "5log-sdk",
-  "version": "0.5.10",
+  "version": "0.5.11",
   "description": "SDK for 5Log Bug Tracking & Error Logger",
   "author": "permaficus<abukhalif2019@gmail.com>",
   "main": "dist/index.js",
@@ -9,6 +9,14 @@
     "package.json",
     "licence.md",
     "README.md"
+  ],
+  "keywords": [
+    "logger",
+    "5log",
+    "error logging",
+    "logs",
+    "sysadmin",
+    "bug tracking"
   ],
   "scripts": {
     "build": "enmav --update-version && rm -rf dist && npm run build:esm",

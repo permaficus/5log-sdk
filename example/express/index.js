@@ -20,7 +20,6 @@ logger.errorListener()
 
 const app = new express();
 const router = Router();
-console.log(appPkg.name)
 // init
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
