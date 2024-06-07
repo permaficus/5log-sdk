@@ -2,14 +2,20 @@ import axios from 'axios';
 import { filog } from '5log-sdk'
 import Crypto from 'crypto'
 
-const logger = new filog([
-    { client_id: 'axios-test-id', url: 'http://localhost:3007/api/v1/logs', logType: 'ANY' }
-])
+const logger = new filog(
+    {
+        source: {
+            app_name: 'axios-example',
+            app_version: '1.0.0'
+        },
+        environment: 'example',
+        transports: [
+            { client_id: 'express-id', url: 'http://logs.devops.local/api/v1/logs', logType: 'ANY' }
+        ]
+    }
+)
 // add error listener
-logger.errorListener({
-    app_name: 'axios-testing-sample',
-    app_version: '1.0.0'
-})
+logger.errorListener()
 // initiate connection to target url
 const client = axios.create();
 client({
@@ -24,11 +30,6 @@ client({
         errorDescription: err,
         eventCode: err.code,
         logTicket: Crypto.randomUUID(),
-        environment: 'dev',
-        destination: err.config.url,
-        source: {
-            app_name: 'axios-testing-sample',
-            app_version: '1.0.0'
-        }
+        destination: err.config.url
     }, { verbose: 'true', originalError: err });
 })

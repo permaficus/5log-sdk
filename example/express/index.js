@@ -3,14 +3,20 @@ import { filog } from '5log-sdk';
 import appPkg from './package.json' with { type: 'json' }
 import Crypto from 'crypto'
 
-const logger = new filog([
-    { client_id: 'express-id', url: 'http://logs.devops.local/api/v1/logs', logType: 'ANY' }
-])
+const logger = new filog(
+    {
+        source: {
+            app_name: appPkg.name,
+            app_version: appPkg.version
+        },
+        environment: 'example',
+        transports: [
+            { client_id: 'express-id', url: 'http://logs.devops.local/api/v1/logs', logType: 'ANY' }
+        ]
+    }
+)
 // handle uncaught exception // unhandled rejection
-logger.errorListener({
-    package_name: appPkg.name,
-    app_version: appPkg.version
-})
+logger.errorListener()
 
 const app = new express();
 const router = Router();
@@ -25,12 +31,7 @@ app.use((err, req, res, next) => {
         logLevel: 'DEBUG',
         errorDescription: err,
         eventCode: `test-${Crypto.randomUUID()}`,
-        logTicket: Crypto.randomUUID(),
-        environment: 'Example',
-        source: {
-            app_name: appPkg.name,
-            app_version: appPkg.version
-        }
+        logTicket: Crypto.randomUUID()
     }, { verbose: 'true', originalError: err });
     res.status(500).json({ error: 'Internal Server Error' });
 });
