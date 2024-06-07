@@ -1,6 +1,6 @@
 {
   "name": "5log-sdk",
-  "version": "0.4.19",
+  "version": "0.5.10",
   "description": "SDK for 5Log Bug Tracking & Error Logger",
   "author": "permaficus<abukhalif2019@gmail.com>",
   "main": "dist/index.js",
@@ -11,9 +11,8 @@
     "README.md"
   ],
   "scripts": {
-    "build": "rm -rf dist && npm run versioning && npm run build:esm",
-    "build:esm": "tsc",
-    "versioning": "node vupd.js"
+    "build": "enmav --update-version && rm -rf dist && npm run build:esm",
+    "build:esm": "tsc"
   },
   "repository": {
     "type": "git",

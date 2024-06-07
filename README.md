@@ -19,11 +19,20 @@ npm i --save 5log-sdk
 import { filog } from '5log-sdk'
 
 // init
-const log = new Logging([
-    { client_id: '{your-client-id}', url: 'https://logs.devops.io/api/v1/logs', logType: 'ANY' }
-    // if you want to separate log into different api service you can add more options
-    { client_id: '{your-client-id}', url: 'https://error.devops.io/api/v1/logs', logType: 'ERROR' }
-])
+const log = new filog(
+    {
+        source: {
+            app_name: 'your-app-name',
+            app_version: '1.0.0'
+        },
+        environment: 'development',
+        transports: [
+            { client_id: '{your-client-id}', url: 'https://logs.devops.io/api/v1/logs', logType: 'ANY' }
+            // if you want to separate log into different api service you can add more options
+            { client_id: '{your-client-id}', url: 'https://error.devops.io/api/v1/logs', logType: 'ERROR' }
+        ]
+    }
+)
 
 // Test Scenario
 function JsonParse (value) {
@@ -51,6 +60,19 @@ function JsonParse (value) {
 JsonParse("{a;b}");
 ```
 
+#### Other Method
+
+```javascript
+const testError = () => {
+    try {
+        throw new Error('Error raised')
+    } catch (error) {
+        // accept 2 argument ( error, eventCode )
+        log.error(error, error.name)
+    }
+}
+```
+
 #### Handling Uncaught Exception & Unhandled Rejection
 
 ```javascript
@@ -58,19 +80,23 @@ JsonParse("{a;b}");
 import { filog } from '5log-sdk'
 
 // init
-const log = new Logging([
-    { 
-        client_id: '{your-client-id}', 
-        url: 'https://logs.devops.io/api/v1/logs',
-        logType: 'ANY' 
+const log = new filog(
+    {
+        source: {
+            app_name: 'your-app-name',
+            app_version: '1.0.0'
+        },
+        environment: 'development',
+        transports: [
+            { client_id: '{your-client-id}', url: 'https://logs.devops.io/api/v1/logs', logType: 'ANY' }
+            // if you want to separate log into different api service you can add more options
+            { client_id: '{your-client-id}', url: 'https://error.devops.io/api/v1/logs', logType: 'ERROR' }
+        ]
     }
-])
+)
 
 // Start by listening for any errors that might occur.
-log.errorListener({
-    package_name: 'your-app-name',
-    app_version: '1.0.0'
-})
+log.errorListener()
 
 // your code goes here
 ```
