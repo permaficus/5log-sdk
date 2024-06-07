@@ -7,22 +7,23 @@
 import HttpClient from "./httpClient"
 import type { 
     ErrorPayload, 
-    ErrorSourceProps, 
     ExtraWriteArguments, 
+    FilogInitArguments, 
     FilogInitObject, 
-    FilogTransportConfig
+    LogLevels
 } from "./types"
 import * as stp from "stacktrace-parser"
 import chalk from "chalk"
 import Crypto from "crypto"
+import FilogError from "./error"
 
 class filog {
-    private args: FilogTransportConfig
+    private args: FilogInitArguments
     /**
      * Has two functions for error listener and log writer. Filog arguments must be an array type
      * @param {Array} args - example [{ client_id, url, logtype }]
      */
-   constructor(args: FilogTransportConfig) {
+   constructor(args: FilogInitArguments) {
         this.args = args
     }
     /**
@@ -33,47 +34,78 @@ class filog {
      * 
      * ```
      * import { filog } from '5log-sdk';
-     * const logger = new filog([
-     *   { 
-     *      client_id: 'your-client-id', 
-     *      url: 'https://logs.devops.io/api/v1/logs',
-     *      logType: 'ANY'
-     *   }
-     * ]);
+     * const logger = new filog({
+     *    source: {
+     *       app_name: 'your-app-name',
+     *       app_verson: '1.0.0'
+     *    },
+     *    environment: 'development',
+     *    transports: [
+     *      { 
+     *          client_id: 'your-client-id', 
+     *          url: 'https://logs.devops.io/api/v1/logs',
+     *          logType: 'ANY'
+     *      }
+     *    ]
+     * });
      * 
-     * logger.errorListener({
-     *   package_name: 'your-app-name',
-     *   app_version: '1.0.0'
-     * })
+     * logger.errorListener()
      * ```
      * For more documentation visit: https://github.com/permaficus/5log-sdk#readme
      */
-    errorListener (source: ErrorSourceProps) {
+    errorListener (): void {
         process.on('uncaughtException', (error: Error) => {
-            this.listenerWrite({
-                error,
-                eventCode: 'uncaughtException',
-                source
-            })
+            this.error(error, 'uncaughtException')
         });
         process.on('unhandledRejection', (error: Error) => {
-            this.listenerWrite({
-                error,
-                eventCode: 'unhandledRejection',
-                source
-            })
+            this.error(error, 'unhandledRejection')
         })
     }
-    private listenerWrite ({ error, eventCode, source }: 
-        { error: Error, eventCode: 'uncaughtException' | 'unhandledRejection', source: ErrorSourceProps }
+    error (error: Error, eventCode?: string | null | undefined): void {
+        this._write({
+            logLevel: 'ERROR',
+            error,
+            eventCode: eventCode || error.name,
+        })
+    };
+    info (error: Error, eventCode?: string | null | undefined): void {
+        this._write({
+            logLevel: 'INFO',
+            error,
+            eventCode: eventCode || error.name,
+        })
+    };
+    warning (error: Error, eventCode?: string | null | undefined): void {
+        this._write({
+            logLevel: 'WARNING',
+            error,
+            eventCode: eventCode || error.name,
+        })
+    };
+    debug (error: Error, eventCode?: string | null | undefined): void {
+        this._write({
+            logLevel: 'DEBUG',
+            error,
+            eventCode: eventCode || error.name,
+        })
+    };
+    /**
+     * private write
+     */
+    private _write ({ logLevel, error, eventCode }: 
+        { 
+            logLevel: LogLevels
+            error: Error, 
+            eventCode?: string
+        }
     ) {
         this.write({
-            logLevel: 'ERROR',
+            logLevel,
             errorDescription: error,
             eventCode,
             logTicket: Crypto.randomUUID(),
-            environment: 'Development',
-            source
+            environment: this.args.environment,
+            source: this.args.source
         }, {
             verbose: 'true',
             originalError: error
@@ -101,9 +133,18 @@ class filog {
      */
     write (error: ErrorPayload, { verbose, originalError }: ExtraWriteArguments): void {
 
-        let transport: FilogInitObject[] = this.args.filter((field: FilogInitObject) => field.logType === error.logLevel)
+        if (!this.args.transports) {
+            console.error(`\n\xa0${chalk.redBright(`--> Cannot send any logs to server: Transport not specified <--\n\n`)}`, originalError)
+            return;
+        }
+
+        let transport: FilogInitObject[] = this.args.transports.filter((field: FilogInitObject) => field.logType === error.logLevel)
         if (transport.length === 0) {
-            transport = this.args.filter((field: FilogInitObject) => field.logType.toUpperCase() === 'ANY')
+            transport = this.args.transports.filter((field: FilogInitObject) => field.logType.toUpperCase() === 'ANY')
+        }
+
+        if (!error.source && this.args.source) {
+            Object.assign(error, { source: { ...this.args.source }})
         }
 
         // if errorDescription or originalError instanceof Error then start parsing the error stack
@@ -128,5 +169,6 @@ class filog {
         connector.send(error)
     }
 }
+
 
 export { filog } 
