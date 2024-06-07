@@ -15,7 +15,6 @@ import type {
 import * as stp from "stacktrace-parser"
 import chalk from "chalk"
 import Crypto from "crypto"
-import FilogError from "./error"
 
 class filog {
     private args: FilogInitArguments
