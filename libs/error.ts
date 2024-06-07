@@ -1,7 +1,7 @@
 import { ApiResponse, HttpClientData } from './types'
 export default class FilogError extends Error {
     statusCode?: number | null
-    apiResponse?: ApiResponse
+    apiResponse?: ApiResponse | null
     rawError?: Error | null
 
     constructor(

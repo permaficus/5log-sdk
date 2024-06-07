@@ -7,22 +7,28 @@ export type ErrorSourceProps = {
     hostname?: string
     ip_address?: string
 }
+export type LogLevels = 'ERROR' | 'WARNING' | 'DEBUG' | 'INFO'
 export type ErrorPayload = {
-    logLevel: 'ERROR' | 'WARNING' | 'DEBUG' | 'INFO'
+    logLevel: LogLevels
     logTicket: string
-    source: object | ErrorSourceProps
-    eventCode: string
+    source?: object | ErrorSourceProps
+    eventCode?: string
     destination?: string
-    environment: string
+    environment?: string
     errorDescription: string | any
 }
 export type FilogInitObject = {
     client_id: string
     url: string
-    logType: 'ANY' | 'ERROR' | 'WARNING' | 'DEBUG' | 'INFO'
+    logType: 'ANY' | LogLevels
 }
 export type FilogTransportConfig = Array<FilogInitObject>
 export type ExtraWriteArguments = {
     verbose?: 'true' | 'false' | undefined
     originalError?: Error | null
+}
+export type FilogInitArguments = {
+    source?: object | ErrorSourceProps
+    environment: string
+    transports: FilogTransportConfig
 }
