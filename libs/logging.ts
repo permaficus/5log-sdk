@@ -145,6 +145,9 @@ class filog {
         if (!error.source && this.args.source) {
             Object.assign(error, { source: { ...this.args.source }})
         }
+        if (!error.environment && this.args.environment) {
+            Object.assign(error, { environment: this.args.environment })
+        }
 
         // if errorDescription or originalError instanceof Error then start parsing the error stack
         let rawObjectStack: Array<stp.StackFrame> = [];
