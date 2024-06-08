@@ -16,14 +16,23 @@ import * as stp from "stacktrace-parser"
 import chalk from "chalk"
 import Crypto from "crypto"
 
+interface filog {
+    debug: (error: Error, eventCode: string | null | undefined) => void
+    error: (error: Error, eventCode: string | null | undefined) => void
+    info: (error: Error, eventCode: string | null | undefined) => void
+    warning: (error: Error, eventCode: string | null | undefined) => void
+}
+
 class filog {
     private args: FilogInitArguments
     /**
-     * Has two functions for error listener and log writer. Filog arguments must be an array type
-     * @param {Array} args - example [{ client_id, url, logtype }]
+     * Create a 5log client application. The filog() function is a top-level function exported from 5log module
+     *
+     * For more information visit: https://github.com/permaficus/5log-sdk#readme
      */
    constructor(args: FilogInitArguments) {
         this.args = args
+        this._init()
     }
     /**
      * Handle uncaught exception, unhandled rejection and other
@@ -60,34 +69,32 @@ class filog {
             this.error(error, 'unhandledRejection')
         })
     }
-    error (error: Error, eventCode?: string | null | undefined): void {
-        this._write({
-            logLevel: 'ERROR',
-            error,
-            eventCode: eventCode || error.name,
+    /**
+     * PRIVATE
+     * 
+     * this method is used at constructor so everytime we call new filog()
+     * the extra props will show on intellisense
+     */
+    private _init (): void {
+        ['debug', 'error', 'info', 'warning'].forEach((methods: string) => {
+            this._methods(methods)
         })
-    };
-    info (error: Error, eventCode?: string | null | undefined): void {
-        this._write({
-            logLevel: 'INFO',
-            error,
-            eventCode: eventCode || error.name,
-        })
-    };
-    warning (error: Error, eventCode?: string | null | undefined): void {
-        this._write({
-            logLevel: 'WARNING',
-            error,
-            eventCode: eventCode || error.name,
-        })
-    };
-    debug (error: Error, eventCode?: string | null | undefined): void {
-        this._write({
-            logLevel: 'DEBUG',
-            error,
-            eventCode: eventCode || error.name,
-        })
-    };
+    }
+    /**
+     * PRIVATE 
+     *
+     * dynamically add methods to for DRY purpose
+     * will add [debug, error, info, warning] into this class
+     */
+    private _methods (name: string): void {
+        (this as any)[name] = (error: Error, eventCode: string | null | undefined) => {
+            this._write({
+                logLevel: name.toUpperCase() as LogLevels,
+                error: error,
+                eventCode: eventCode || error.name
+            })
+        }
+    }
     /**
      * private write
      */
@@ -100,11 +107,11 @@ class filog {
     ) {
         this.write({
             logLevel,
-            errorDescription: error,
-            eventCode,
             logTicket: Crypto.randomUUID(),
             environment: this.args.environment,
-            source: this.args.source
+            source: this.args.source,
+            eventCode,
+            errorDescription: error,
         }, {
             verbose: 'true',
             originalError: error
@@ -171,6 +178,5 @@ class filog {
         connector.send(error)
     }
 }
-
 
 export { filog } 
