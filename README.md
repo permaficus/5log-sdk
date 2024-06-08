@@ -73,6 +73,19 @@ const testError = () => {
 }
 ```
 
+#### Available Log Type
+
+For now, we only provide logging for `error`, `warning`, `debug`, and `info` types and we may include custom log types in the future.
+
+This logger accepts the following parameters:
+
+| name      | type    | description           |
+|-----------|---------|-----------------------|
+| error     | Error   |                       |
+| eventCode | string  | Default: error name like `SyntaxError`, `ReferenceError` or you can create your own custom eventCode |
+| printOut  | boolean | If you choose to set `True` then the error message will show up in your console/terminal. Set `False` if you use `throw new Error` method |
+|---------------------------------------------|
+
 #### Handling Uncaught Exception & Unhandled Rejection
 
 ```javascript
