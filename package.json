@@ -1,6 +1,6 @@
 {
   "name": "5log-sdk",
-  "version": "0.5.17",
+  "version": "0.5.22",
   "description": "SDK for 5Log Bug Tracking & Error Logger",
   "author": "permaficus<abukhalif2019@gmail.com>",
   "main": "dist/index.js",
