@@ -6,6 +6,7 @@ export type ErrorSourceProps = {
     package_name?: string
     hostname?: string
     ip_address?: string
+    module_name?: string
 }
 export type LogLevels = 'ERROR' | 'WARNING' | 'DEBUG' | 'INFO'
 export type ErrorPayload = {
@@ -23,7 +24,7 @@ export type FilogInitObject = {
     logType: 'ANY' | LogLevels
 }
 export type FilogTransportConfig = Array<FilogInitObject>
-export type ExtraWriteArguments = {
+export type WriteOptions = {
     verbose?: 'true' | 'false' | undefined
     originalError?: Error | null
 }
