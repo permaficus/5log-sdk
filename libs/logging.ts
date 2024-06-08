@@ -7,20 +7,20 @@
 import HttpClient from "./httpClient"
 import type { 
     ErrorPayload, 
-    ExtraWriteArguments, 
     FilogInitArguments, 
     FilogInitObject, 
-    LogLevels
+    LogLevels,
+    WriteOptions
 } from "./types"
 import * as stp from "stacktrace-parser"
 import chalk from "chalk"
 import Crypto from "crypto"
 
 interface filog {
-    debug: (error: Error, eventCode: string | null | undefined) => void
-    error: (error: Error, eventCode: string | null | undefined) => void
-    info: (error: Error, eventCode: string | null | undefined) => void
-    warning: (error: Error, eventCode: string | null | undefined) => void
+    debug: (error: Error, eventCode?: string | null | undefined, printOut?: boolean) => void
+    error: (error: Error, eventCode?: string | null | undefined, printOut?: boolean) => void
+    info: (error: Error, eventCode?: string | null | undefined, printOut?: boolean) => void
+    warning: (error: Error, eventCode?: string | null | undefined, printOut?: boolean) => void
 }
 
 class filog {
@@ -83,26 +83,28 @@ class filog {
     /**
      * PRIVATE 
      *
-     * dynamically add methods to for DRY purpose
+     * dynamically add methods to class for DRY purpose.
      * will add [debug, error, info, warning] into this class
      */
     private _methods (name: string): void {
-        (this as any)[name] = (error: Error, eventCode: string | null | undefined) => {
+        (this as any)[name] = (error: Error, eventCode?: string | null | undefined, printOut?: boolean) => {
             this._write({
                 logLevel: name.toUpperCase() as LogLevels,
                 error: error,
-                eventCode: eventCode || error.name
+                eventCode: eventCode || error.name,
+                printOut
             })
         }
     }
     /**
      * private write
      */
-    private _write ({ logLevel, error, eventCode }: 
+    private _write ({ logLevel, error, eventCode, printOut }: 
         { 
             logLevel: LogLevels
             error: Error, 
-            eventCode?: string
+            eventCode?: string,
+            printOut?: boolean
         }
     ) {
         this.write({
@@ -113,7 +115,7 @@ class filog {
             eventCode,
             errorDescription: error,
         }, {
-            verbose: 'true',
+            verbose: String(printOut) as WriteOptions["verbose"],
             originalError: error
         })
     }
@@ -137,7 +139,7 @@ class filog {
      * }
      * ```
      */
-    write (error: ErrorPayload, { verbose, originalError }: ExtraWriteArguments): void {
+    write (error: ErrorPayload, { verbose, originalError }: WriteOptions): void {
 
         if (!this.args.transports) {
             console.error(`\n\xa0${chalk.redBright(`--> Cannot send any logs to server: Transport not specified <--\n\n`)}`, originalError)
