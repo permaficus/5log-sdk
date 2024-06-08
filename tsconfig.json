@@ -12,7 +12,8 @@
     "noEmit": false,
     "moduleResolution": "Node10",
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": true,
+    "resolveJsonModule": true
   },
-  "exclude": ["node_modules", "dist", " tsconfig.json"]
+  "exclude": ["node_modules", "dist", " tsconfig.json", "enmav.config.json", "vupd.js"]
 }

@@ -50,7 +50,6 @@ function JsonParse (value) {
             environment: '{{your-environment}}',
             eventCode: 'ERR-2180'
         }, { 
-            // options for printout original error and error print out
             verbose: 'true', 
             originalError: error
         })
@@ -68,6 +67,7 @@ const testError = () => {
         throw new Error('Error raised')
     } catch (error) {
         // accept 2 argument ( error, eventCode )
+        // you can use error.name as your eventCode or generate a custom eventCode
         log.error(error, error.name)
     }
 }
