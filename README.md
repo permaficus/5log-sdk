@@ -83,7 +83,22 @@ This logger accepts the following parameters:
 |-----------|---------|-----------------------|
 | error     | Error   |                       |
 | eventCode | string  | Default: error name like `SyntaxError`, `ReferenceError` or you can create your own custom eventCode |
-| printOut  | boolean | If you choose to set `True` then the error message will show up in your console/terminal. Set `False` if you use `throw new Error` method |
+| printOut  | boolean | If you set `True`, the error message will show up in your console/terminal. Set `False` if you use the `throw new Error` method on catching errors. |
+
+#### Example on using printOut
+
+```javascript
+function trapError () {
+    try {
+        // your code
+    } catch (error) {
+        log.error(error, 'A007', true)
+        throw new CustomError(`This error is suck`)
+    }
+}
+```
+
+This method will not display any error messages in the logger.
 
 #### Handling Uncaught Exception & Unhandled Rejection
 
