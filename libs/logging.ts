@@ -6,10 +6,13 @@
 
 import HttpClient from "./httpClient"
 import type { 
+    CustomErrorPayload,
     ErrorPayload, 
+    EventCode, 
     FilogInitArguments, 
     FilogInitObject, 
     LogLevels,
+    LoggingOptions,
     WriteOptions
 } from "./types"
 import * as stp from "stacktrace-parser"
@@ -17,10 +20,10 @@ import chalk from "chalk"
 import Crypto from "crypto"
 
 interface filog {
-    debug: (error: Error, eventCode?: string | null | undefined, printOut?: boolean) => void
-    error: (error: Error, eventCode?: string | null | undefined, printOut?: boolean) => void
-    info: (error: Error, eventCode?: string | null | undefined, printOut?: boolean) => void
-    warning: (error: Error, eventCode?: string | null | undefined, printOut?: boolean) => void
+    debug: (error: Error, options?: LoggingOptions) => void
+    error: (error: Error, options?: LoggingOptions) => void
+    info: (error: Error, options?: LoggingOptions) => void
+    warning: (error: Error, options?: LoggingOptions) => void
 }
 
 class filog {
@@ -63,10 +66,10 @@ class filog {
      */
     errorListener (): void {
         process.on('uncaughtException', (error: Error) => {
-            this.error(error, 'uncaughtException')
+            this.error(error, { eventCode: 'uncaughtException', printOut: true })
         });
         process.on('unhandledRejection', (error: Error) => {
-            this.error(error, 'unhandledRejection')
+            this.error(error, { eventCode: 'unhandledRejection', printOut: true })
         })
     }
     /**
@@ -87,35 +90,42 @@ class filog {
      * will add [debug, error, info, warning] into this class
      */
     private _methods (name: string): void {
-        (this as any)[name] = (error: Error, eventCode?: string | null | undefined, printOut?: boolean) => {
+        (this as any)[name] = (error: Error, options?: LoggingOptions) => {
             this._write({
                 logLevel: name.toUpperCase() as LogLevels,
                 error: error,
-                eventCode: eventCode || error.name,
-                printOut
+                eventCode: options.eventCode || error.name,
+                printOut: options.printOut,
+                payload: options.payload
             })
         }
     }
     /**
      * private write
      */
-    private _write ({ logLevel, error, eventCode, printOut }: 
+    private _write ({ logLevel, error, eventCode, printOut, payload }: 
         { 
             logLevel: LogLevels
             error: Error, 
-            eventCode?: string,
-            printOut?: boolean
+            eventCode?: EventCode,
+            printOut?: boolean,
+            payload?: CustomErrorPayload
         }
     ) {
+        if (!payload || Object.entries(payload).length === 0) {
+            payload = {
+                logTicket: Crypto.randomUUID(),
+                errorDescription: error,
+                eventCode,
+                environment: this.args.environment,
+                source: this.args.source
+            }
+        }
         this.write({
             logLevel,
-            logTicket: Crypto.randomUUID(),
-            environment: this.args.environment,
-            source: this.args.source,
-            eventCode,
-            errorDescription: error,
+            ...payload,
         }, {
-            verbose: String(printOut) as WriteOptions["verbose"],
+            verbose: String(printOut) as WriteOptions["verbose"] || 'true',
             originalError: error
         })
     }
