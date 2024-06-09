@@ -68,7 +68,9 @@ const testError = () => {
     } catch (error) {
         // accept 2 argument ( error, eventCode )
         // you can use error.name as your eventCode or generate a custom eventCode
-        log.error(error, error.name)
+        log.error(error, { eventCode: error.name })
+        // with custom code
+        log.error(error, { eventCode: 'E-007' })
     }
 }
 ```
@@ -79,11 +81,13 @@ For now, we only provide logging for `error`, `warning`, `debug`, and `info` typ
 
 This logger accepts the following parameters:
 
-| name      | type    | description           |
-|-----------|---------|-----------------------|
-| error     | Error   |                       |
-| eventCode | string  | Default: error name like `SyntaxError`, `ReferenceError` or you can create your own custom eventCode |
-| printOut  | boolean | If you set `True`, the error message will show up in your console/terminal. Set `False` if you use the `throw new Error` method on catching errors. |
+| name      | value      | type    | description           |
+|-----------|------------|---------|-----------------------|
+| error     | Error      |         |                       |
+| options   |     -      | Object  |
+|           | eventCode  | String  | Default: error name like `SyntaxError`, `ReferenceError` or you can create your own custom eventCode |
+|           | printOut   | Boolean | If you set `True`, the error message will show up in your console/terminal. Set `False` if you use the `throw new Error` method on catching errors. |
+|           | payload    | Object  | If you have your own logger API, you can create a custom schema based on your API requirements. |
 
 #### Example on using printOut
 
@@ -92,13 +96,36 @@ function trapError () {
     try {
         // your code
     } catch (error) {
-        log.error(error, 'A007', true)
+        log.error(error, { printOut: false })
+        // let the CustomError print out the error message
         throw new CustomError(`This error is suck`)
     }
 }
 ```
 
-This method will not display any error messages in the logger.
+#### Example using custom schema on payload
+
+Say your backend has properties with requirements such as `logId`, `details`, and `timestamp`. Then, set the payload as shown in the example below.
+
+```javascript
+function trapError () {
+    try {
+        // your code
+    } catch(error) {
+        log.error(error, {
+            payload: {
+                // your API requirement
+                logId: Crypto.uuid(),
+                details: error
+                timestamp: Date.now()
+            }
+        })
+    }
+}
+```
+>[!NOTE]
+>
+> Log levels such as `ERROR`, `WARNING`, `DEBUG`, or `INFO` are automatically provided by filog.
 
 #### Handling Uncaught Exception & Unhandled Rejection
 

@@ -1,5 +1,6 @@
 export type ApiResponse = object | null | undefined
 export type HttpClientData = object | null | undefined
+export type EventCode = string | null | undefined
 export type ErrorSourceProps = {
     app_name?: string
     app_version?: string
@@ -9,15 +10,18 @@ export type ErrorSourceProps = {
     module_name?: string
 }
 export type LogLevels = 'ERROR' | 'WARNING' | 'DEBUG' | 'INFO'
+export type CustomErrorPayload = {
+    [key: string]: any
+}
 export type ErrorPayload = {
     logLevel: LogLevels
-    logTicket: string
+    logTicket?: string
     source?: object | ErrorSourceProps
-    eventCode?: string
+    eventCode?: EventCode
     destination?: string
     environment?: string
-    errorDescription: string | any
-}
+    errorDescription?: string | any
+} & CustomErrorPayload
 export type FilogInitObject = {
     client_id: string
     url: string
@@ -32,4 +36,9 @@ export type FilogInitArguments = {
     source?: object | ErrorSourceProps
     environment: string
     transports: FilogTransportConfig
+}
+export type LoggingOptions = {
+    eventCode?: EventCode,
+    printOut?: boolean,
+    payload?: CustomErrorPayload
 }
