@@ -116,7 +116,7 @@ function trapError () {
             payload: {
                 // your API requirement
                 logId: Crypto.uuid(),
-                details: error
+                details: error,
                 timestamp: Date.now()
             }
         })
