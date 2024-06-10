@@ -94,9 +94,9 @@ class filog {
             this._write({
                 logLevel: name.toUpperCase() as LogLevels,
                 error: error,
-                eventCode: options.eventCode || error.name,
-                printOut: options.printOut,
-                payload: options.payload
+                eventCode: options?.eventCode || error.name,
+                printOut: options?.printOut,
+                payload: options?.payload
             })
         }
     }
@@ -125,7 +125,7 @@ class filog {
             logLevel,
             ...payload,
         }, {
-            verbose: String(printOut) as WriteOptions["verbose"] || 'true',
+            verbose: String(printOut) as WriteOptions["verbose"],
             originalError: error
         })
     }
@@ -169,18 +169,21 @@ class filog {
         }
 
         // if errorDescription or originalError instanceof Error then start parsing the error stack
-        let rawObjectStack: Array<stp.StackFrame> = [];
+        let errorStack: Array<stp.StackFrame> = [];
         let _errorDescription: string = '';
         if (error.errorDescription instanceof Error || originalError instanceof Error) {
             // parsing the error stack
-            rawObjectStack = error.errorDescription ? stp.parse(error.errorDescription.stack) : stp.parse(originalError.stack)
+            errorStack = error.errorDescription ? stp.parse(error.errorDescription.stack) : stp.parse(originalError.stack);
+            // We only need the information about where the error actually occurred
+            errorStack = errorStack.filter((items) => /^file:/gi.test(items.file) === true || items.file === `<anonymous>`);
             // combining error
             _errorDescription = `${error.errorDescription ? error.errorDescription.name : originalError.name}: ${error.errorDescription 
                 ? error.errorDescription.message : originalError.message}\n`
-            _errorDescription = _errorDescription + `\xa0\xa0\xa0[${rawObjectStack[0].methodName}] ${rawObjectStack[0].file}\n`
-            _errorDescription = _errorDescription + `\xa0\xa0\xa0[${rawObjectStack[1].methodName}] ${rawObjectStack[1].file}:${rawObjectStack[1].lineNumber}:${rawObjectStack[1].column}`
+            errorStack.forEach((info: any) => {
+                _errorDescription = _errorDescription + `\xa0\xa0\xa0[${info.methodName}] ${info.file}${info.lineNumber ? `:${info.lineNumber}` : ''}${info.column ? `:${info.column}` : ''}\n`
+            })
             // update errorDescription
-            error.errorDescription = _errorDescription
+            error.errorDescription = _errorDescription.trimEnd();
         } else {
             _errorDescription = error.errorDescription
         }
