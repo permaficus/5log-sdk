@@ -175,7 +175,7 @@ class filog {
             // parsing the error stack
             errorStack = error.errorDescription ? stp.parse(error.errorDescription.stack) : stp.parse(originalError.stack);
             // We only need the information about where the error actually occurred
-            errorStack = errorStack.filter((items) => /^file:/gi.test(items.file) === true || items.file === `<anonymous>`);
+            errorStack = errorStack.filter((items) => /^file:/gi.test(items.file) === true || /\.[ts|js|jsx|tsx|esm|cjs]+$/gi.test(items.file) === true || items.file === `<anonymous>`);
             // combining error
             _errorDescription = `${error.errorDescription ? error.errorDescription.name : originalError.name}: ${error.errorDescription 
                 ? error.errorDescription.message : originalError.message}\n`
