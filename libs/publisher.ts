@@ -44,6 +44,9 @@ const publishLog = async (url: string, error: ErrorPayload): Promise<void> => {
         console.error(chalk.red(`[RBMQ] Connection to ${url.split('#')[0]} refused`))
         return;
     })
+    rbmq.on('access_refused', error => {
+        console.info(chalk.red(`[RBMQ] Error: ${error.message}`));
+    })
 }
 
 export { publishLog }
