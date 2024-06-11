@@ -73,7 +73,7 @@ class RabbitInstance extends EventEmitter {
                 }
             }
             if ((/ACCESS_REFUSED/gi).test(error.message)) {
-                this.emit('ACCREFUSED', error.message);
+                this.emit('access_refused', error);
                 return;
             }
 
