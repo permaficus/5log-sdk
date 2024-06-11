@@ -18,6 +18,7 @@ import type {
 import * as stp from "stacktrace-parser"
 import chalk from "chalk"
 import Crypto from "crypto"
+import { publishLog } from "./publisher"
 
 interface filog {
     debug: (error: Error, options?: LoggingOptions) => void
@@ -188,9 +189,14 @@ class filog {
             _errorDescription = error.errorDescription
         }
 
-        if (verbose === 'true') console.log(chalk.redBright(`\n${_errorDescription}\n`))
-        const connector = new HttpClient(transport[0].client_id, transport[0].url);
-        connector.send(error)
+        if (verbose === 'true') console.log(chalk.redBright(`\n${_errorDescription}\n`));
+        if (/^https?:\/\/[^\s\/$.?#].[^\s]*$/gi.test(transport[0].url) === true) {
+            const connector = new HttpClient(transport[0].client_id, transport[0].url);
+            connector.send(error)
+        }
+        if (/^amqps?:\/\/[^\s\/$.?#].[^\s]*$/gi.test(transport[0].url) === true) {
+            publishLog(transport[0].url, error)
+        }
     }
 }
 

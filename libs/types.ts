@@ -26,7 +26,7 @@ export type FilogInitObject = {
     client_id: string
     url: string
     logType: 'ANY' | LogLevels
-}
+} & BrokerExchangeInterface
 export type FilogTransportConfig = Array<FilogInitObject>
 export type WriteOptions = {
     verbose?: 'true' | 'false' | undefined
@@ -41,4 +41,35 @@ export type LoggingOptions = {
     eventCode?: EventCode,
     printOut?: boolean,
     payload?: CustomErrorPayload
+}
+export type FilogRmqInitObject = {
+    exchange?: string
+    routingKey?: string
+    queue?: string
+}
+export interface BrokerExchangeInterface {
+    channel: any
+    name: string | undefined | null
+    type: ExchangeType
+    durable: boolean
+    autoDelete?: boolean
+    internal?: boolean
+    arguments?: ExchangeArgument
+}
+export interface QueueTypeInterface {
+    name: string | undefined | null
+    channel: any,
+    options?: {
+        durable: boolean,
+        arguments?: QueueArguments
+    }
+}
+export type ExchangeType = 'direct' | 'fanout' | 'headers' | 'topics'
+export type ExchangeArgument = {
+    'alternate-exchange'?: string | string[] | null
+}
+export type QueueArguments = {
+    'x-queue-type'?: 'classic' | 'quorum' | 'stream',
+    'x-dead-letter-exchange'?: string | string[] | null,
+    'x-dead-letter-routing-key'?: string | string[] | null
 }
