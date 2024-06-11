@@ -1,7 +1,7 @@
 {
   "updaterOptions": {
     "packageFile": "./package.json",
-    "buildMax": 30,
+    "buildMax": 50,
     "minorMax": 20,
     "bundler": "tsc"
   }
