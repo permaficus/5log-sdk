@@ -1,6 +1,6 @@
 {
   "name": "5log-sdk",
-  "version": "0.5.43",
+  "version": "0.6.3",
   "description": "SDK for 5Log Bug Tracking & Error Logger",
   "author": "permaficus<abukhalif2019@gmail.com>",
   "main": "dist/index.js",
@@ -32,6 +32,7 @@
   },
   "homepage": "https://github.com/permaficus/5log-sdk#readme",
   "dependencies": {
+    "amqplib": "^0.10.4",
     "axios": "^1.7.2",
     "chalk": "^4.1.2",
     "stacktrace-parser": "^0.1.10",
