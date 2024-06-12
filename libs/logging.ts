@@ -29,6 +29,7 @@ interface filog {
 
 class filog {
     private args: FilogInitArguments
+    private wrappedIn: string
     /**
      * Create a 5log client application. The filog() function is a top-level function exported from 5log module
      *
@@ -36,6 +37,7 @@ class filog {
      */
    constructor(args: FilogInitArguments) {
         this.args = args
+        this.wrappedIn = ''
         this._init()
     }
     /**
@@ -74,6 +76,31 @@ class filog {
         })
     }
     /**
+     * If you are using a message broker like RabbitMQ, you can utilize this function to determine the name of your error payload wrapper.
+     * 
+     * #### Example
+     * 
+     * ```javascript
+     * filog.setMessageWrapper('MyPayloads');
+     * ```
+     * 
+     * this will tell the filog to wrapped your custom payload into :
+     * 
+     * ```json
+     * {
+     *   "MyPayloads": {
+     *      "key1": "custom-value-1",
+     *      "key2": "custom-value-2"
+     *   }
+     * }
+     * ```
+     * 
+     * If you don't specify a wrapper name, filog will use the default wrapper name, which is `message`.
+     */
+    setMessageWrapper (name: string): void {
+        this.wrappedIn = name
+    }
+    /**
      * PRIVATE
      * 
      * this method is used at constructor so everytime we call new filog()
@@ -90,7 +117,7 @@ class filog {
      * dynamically add methods to class for DRY purpose.
      * will add [debug, error, info, warning] into this class
      */
-    private _methods (name: string): void {
+    private _methods (name: string | undefined): void {
         (this as any)[name] = (error: Error, options?: LoggingOptions) => {
             this._write({
                 logLevel: name.toUpperCase() as LogLevels,
@@ -195,7 +222,7 @@ class filog {
             connector.send(error)
         }
         if (/^amqps?:\/\/[^\s\/$.?#].[^\s]*$/gi.test(transport[0].url) === true) {
-            publishLog(transport[0].url, error)
+            publishLog(transport[0].url, error, this.wrappedIn)
         }
     }
 }

@@ -155,6 +155,51 @@ log.errorListener()
 // your code goes here
 ```
 
+#### Filog Transport Method
+
+Currently, Filog only supports the HTTP transport method and RabbitMQ as a message broker. In the future, it will also support the use of GraphQL and Apache Kafka.
+
+Example of using RabbitMQ:
+
+```javascript
+import { filog } from '5log-sdk';
+
+const logger = new filog({
+    transports: [
+        { client_id: "your-client-id", url: "amqp://username:password@host:5672/vhost?heartbeat=5&connection_timout=1000#{exchange-name}:{queue-name}:{routekey}", logType: "any"}
+    ]
+})
+
+// set payload wrapper name if you like (optional)
+logger.setMessageWrapper("MyErrorPayload");
+
+// rest of your code
+```
+
+RabbitMQ service will see your payload as :
+
+```yaml
+{
+    "MyErrorPayload": {
+        // your payloads
+    }
+}
+```
+
+If you don't specify any, it will look like this :
+
+```yaml
+{
+    "message": {
+        // your payloads
+    }
+}
+```
+
+>[!NOTE]
+>
+> To specify an exchange name, queue name and routing key in url parameter, use colon as separator 
+
 #### In Project Example
 
 Please refer to this [Example](https://github.com/permaficus/5log-sdk/tree/main/example) for more usage in real projects
