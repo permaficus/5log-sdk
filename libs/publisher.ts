@@ -1,8 +1,8 @@
 import { RabbitInstance } from "./amqp";
 import chalk from "chalk";
-import { ErrorPayload } from "./types";
+import { ErrorPayload, ExchangeType, PublisherOptions, WrapperTypes } from "./types";
 
-const publishLog = async (url: string, error: ErrorPayload, wrappedIn?: string | undefined): Promise<void> => {
+const publishLog = async (url: string, error: ErrorPayload, wrappedIn?: WrapperTypes, options?: PublisherOptions): Promise<void> => {
     const rbmq = new RabbitInstance();
     rbmq.conect(url);
     rbmq.on('connected', async (EventListener) => {
@@ -11,7 +11,7 @@ const publishLog = async (url: string, error: ErrorPayload, wrappedIn?: string |
         const targetRoutingKey = rbmq.getExchangeConfig.routingKey;
         const exchange = await rbmq.initiateExchange({
             name: rbmq.getExchangeConfig.name,
-            type: 'direct',
+            type: options?.exchangeType ? options.exchangeType : 'direct',
             durable: true,
             autoDelete: false,
             internal: false,
@@ -23,8 +23,8 @@ const publishLog = async (url: string, error: ErrorPayload, wrappedIn?: string |
             options: {
                 durable: true,
                 arguments: { 
-                    'x-queue-type': 'classic', 
-                    'x-dead-letter-exchange': rbmq.getExchangeConfig.name 
+                    'x-queue-type': options?.queueArguments["x-queue-type"] || 'classic', 
+                    'x-dead-letter-exchange': options?.queueArguments["x-dead-letter-routing-key"] || rbmq.getExchangeConfig.name
                 }
             }
         });

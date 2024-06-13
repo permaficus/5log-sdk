@@ -64,12 +64,20 @@ export interface QueueTypeInterface {
         arguments?: QueueArguments
     }
 }
+export type WrapperTypes = string | undefined
 export type ExchangeType = 'direct' | 'fanout' | 'headers' | 'topics'
 export type ExchangeArgument = {
     'alternate-exchange'?: string | string[] | null
 }
+export type QueueTypes = 'classic' | 'quorum' | 'stream'
 export type QueueArguments = {
-    'x-queue-type'?: 'classic' | 'quorum' | 'stream',
+    'x-queue-type'?: QueueTypes,
     'x-dead-letter-exchange'?: string | string[] | null,
     'x-dead-letter-routing-key'?: string | string[] | null
+    'x-single-active-consumer'?: string | string[] | null
+}
+export interface PublisherOptions {
+    exchangeType?: ExchangeType | undefined, 
+    exchangeArgument?: ExchangeArgument | undefined, 
+    queueArguments?: QueueArguments | undefined
 }

@@ -13,6 +13,7 @@ import type {
     FilogInitObject, 
     LogLevels,
     LoggingOptions,
+    PublisherOptions,
     WriteOptions
 } from "./types"
 import * as stp from "stacktrace-parser"
@@ -30,6 +31,7 @@ interface filog {
 class filog {
     private args: FilogInitArguments
     private wrappedIn: string
+    private publisherOpts: PublisherOptions
     /**
      * Create a 5log client application. The filog() function is a top-level function exported from 5log module
      *
@@ -38,6 +40,7 @@ class filog {
    constructor(args: FilogInitArguments) {
         this.args = args
         this.wrappedIn = ''
+        this.publisherOpts
         this._init()
     }
     /**
@@ -99,6 +102,20 @@ class filog {
      */
     setMessageWrapper (name: string): void {
         this.wrappedIn = name
+    }
+    /**
+     * When using rabbitmq as your message broker, filog will set a default value on options like exchange type and queue configs.
+     * here some default value for publisher options
+     * - Exchange Type: `direct`
+     * - Queue Arguments: 
+     *   - x-queue-type = `classic`
+     *   - x-dead-letter-exchange = `_your_exchange_name_`
+     *   - x-dead-routing-key = `empty`
+     * 
+     * You can override theese settings to meet your requirement
+     */
+    setPublisherOptions (options: PublisherOptions): void {
+        this.publisherOpts = { ...options }
     }
     /**
      * PRIVATE
@@ -222,7 +239,7 @@ class filog {
             connector.send(error)
         }
         if (/^amqps?:\/\/[^\s\/$.?#].[^\s]*$/gi.test(transport[0].url) === true) {
-            publishLog(transport[0].url, error, this.wrappedIn)
+            publishLog(transport[0].url, error, this.wrappedIn, this.publisherOpts)
         }
     }
 }
