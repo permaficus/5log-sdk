@@ -24,7 +24,8 @@ const publishLog = async (url: string, error: ErrorPayload, wrappedIn?: WrapperT
                 durable: true,
                 arguments: { 
                     'x-queue-type': options?.queueArguments["x-queue-type"] || 'classic', 
-                    'x-dead-letter-exchange': options?.queueArguments["x-dead-letter-routing-key"] || rbmq.getExchangeConfig.name
+                    'x-dead-letter-exchange': options?.queueArguments["x-dead-letter-routing-key"] || rbmq.getExchangeConfig.name,
+                    ...options?.queueArguments
                 }
             }
         });
