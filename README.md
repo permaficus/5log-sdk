@@ -105,7 +105,7 @@ function trapError () {
 
 #### Example using custom schema on payload
 
-Say your backend has properties with requirements such as `logId`, `details`, and `timestamp`. Then, set the payload as shown in the example below.
+Say your backend has extra requirements such as `logId`, `functionName`, and `timestamp`. Then, set the payload as shown in the example below.
 
 ```javascript
 function trapError () {
@@ -116,7 +116,7 @@ function trapError () {
             payload: {
                 // your API requirement
                 logId: Crypto.uuid(),
-                details: error,
+                functionName: 'postIt',
                 timestamp: Date.now()
             }
         })
@@ -125,7 +125,7 @@ function trapError () {
 ```
 >[!NOTE]
 >
-> Log levels such as `ERROR`, `WARNING`, `DEBUG`, or `INFO` are automatically provided by filog.
+> Log levels such as `ERROR`, `WARNING`, `DEBUG`, or `INFO` are automatically provided by filog, and filog will generate the `error details` for you
 
 #### Handling Uncaught Exception & Unhandled Rejection
 
@@ -199,6 +199,51 @@ If you don't specify any, it will look like this :
 >[!NOTE]
 >
 > To specify an exchange name, queue name, and routing key in the URL parameter, use a colon as a separator.
+
+#### RabbitMQ Options
+
+Filog uses the default options for RabbitMQ configuration, such as the exchange type, queue type or aguments. However, you can customize these settings based on your requirements.
+
+| Parameter            | Value                                    | Default       |
+|----------------------|------------------------------------------|---------------|
+| Exchange Type        | `direct`, `fanout`, `headers`, `topics`  | `direct`      |
+| Exchange Argument    | `alternate-exchange`                     | Not Set       |
+| Queue Type           | `classic`, `quorum`, `stream`            | `classic`     |
+| Queue Arguments      | `x-dead-letter-exchange`                 | exchange name |
+|                      | `x-dead-letter-routing-key`              | Not Set       |
+|                      | `x-single-active-consumer`               | Not Set       |
+|                      | `x-expires`                              | Not Set       |
+|                      | `x-message-ttl`                          | Not Set       |
+|                      | `x-overflow` valid value: `drop-head`, `reject-publish` or `rejectd-publish-dlx`  | Not Set |
+|                      | `x-max-length`                           | Not Set       |
+|                      | `x-max-length-bytes`                     | Not Set       |
+|                      | `x-queue-leader-locator`                 | Not Set       |
+
+Example:
+
+```javascript
+import { filog } from '5log-sdk';
+
+const logger = new filog({
+    transports: [
+        { client_id: "your-client-id", url: "amqp://username:password@host:5672/vhost?heartbeat=5&connection_timout=1000#{exchange-name}:{queue-name}:{routekey}", logType: "any"}
+    ]
+})
+
+logger.setPublisherOpts({
+    exchangeType: 'fanout',
+    exchangeArgument: { 'alternate-exchange': 'my-second-exchange' },
+    queueArguments: {
+        'x-queue-type': 'quorum',
+        'x-dead-letter-exchange': 'my-exchange'
+        // and so on
+    }
+})
+
+// rest of your code
+```
+
+
 
 #### In Project Example
 
