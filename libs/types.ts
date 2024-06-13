@@ -70,11 +70,18 @@ export type ExchangeArgument = {
     'alternate-exchange'?: string | string[] | null
 }
 export type QueueTypes = 'classic' | 'quorum' | 'stream'
+export type XOverFlowType = 'drop-head' | 'reject-publish' | 'reject-publish-dlx'
 export type QueueArguments = {
     'x-queue-type'?: QueueTypes,
     'x-dead-letter-exchange'?: string | string[] | null,
     'x-dead-letter-routing-key'?: string | string[] | null
     'x-single-active-consumer'?: string | string[] | null
+    'x-expires'?: number | null
+    'x-message-ttl'?: number | null
+    'x-overflow'?: XOverFlowType
+    'x-max-length'?: number | null
+    'x-max-length-bytes'?: number | null
+    'x-queue-leader-locator'?: string | string[] | null
 }
 export interface PublisherOptions {
     exchangeType?: ExchangeType | undefined, 
