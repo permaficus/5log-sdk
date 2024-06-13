@@ -214,7 +214,7 @@ Filog uses the default options for RabbitMQ configuration, such as the exchange 
 |                      | `x-single-active-consumer`               | Not Set       |
 |                      | `x-expires`                              | Not Set       |
 |                      | `x-message-ttl`                          | Not Set       |
-|                      | `x-overflow` valid value: `drop-head`, `reject-publish` or `rejectd-publish-dlx`  | Not Set |
+|                      | `x-overflow` valid value: `drop-head`, `reject-publish` or `reject-publish-dlx`  | Not Set |
 |                      | `x-max-length`                           | Not Set       |
 |                      | `x-max-length-bytes`                     | Not Set       |
 |                      | `x-queue-leader-locator`                 | Not Set       |
