@@ -30,7 +30,7 @@ export type FilogInitObject = {
 export type FilogTransportConfig = Array<FilogInitObject>
 export type WriteOptions = {
     verbose?: 'true' | 'false' | undefined
-    originalError?: Error | null
+    originalError?: Error | null | undefined
 }
 export type FilogInitArguments = {
     source?: object | ErrorSourceProps
