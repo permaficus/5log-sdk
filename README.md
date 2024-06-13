@@ -198,7 +198,7 @@ If you don't specify any, it will look like this :
 
 >[!NOTE]
 >
-> To specify an exchange name, queue name and routing key in url parameter, use colon as separator 
+> To specify an exchange name, queue name, and routing key in the URL parameter, use a colon as a separator.
 
 #### In Project Example
 
