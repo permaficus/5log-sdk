@@ -160,7 +160,6 @@ class filog {
         if (!payload || Object.entries(payload).length === 0) {
             payload = {
                 logTicket: Crypto.randomUUID(),
-                errorDescription: error,
                 eventCode,
                 environment: this.args.environment,
                 source: this.args.source
@@ -168,6 +167,7 @@ class filog {
         }
         this.write({
             logLevel,
+            errorDescription: error,
             ...payload,
         }, {
             verbose: String(printOut) as WriteOptions["verbose"],
