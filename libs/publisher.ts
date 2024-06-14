@@ -1,6 +1,6 @@
 import { RabbitInstance } from "./amqp";
 import chalk from "chalk";
-import { ErrorPayload, ExchangeType, PublisherOptions, WrapperTypes } from "./types";
+import { ErrorPayload, PublisherOptions, WrapperTypes } from "./types";
 
 const publishLog = async (url: string, error: ErrorPayload, wrappedIn?: WrapperTypes, options?: PublisherOptions): Promise<void> => {
     const rbmq = new RabbitInstance();
