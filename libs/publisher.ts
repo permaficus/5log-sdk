@@ -1,8 +1,14 @@
 import { RabbitInstance } from "./amqp";
 import chalk from "chalk";
-import { ErrorPayload, PublisherOptions, WrapperTypes } from "./types";
+import { AdditionalWrapper, ErrorPayload, PublisherOptions, WrapperTypes } from "./types";
 
-const publishLog = async (url: string, error: ErrorPayload, wrappedIn?: WrapperTypes, options?: PublisherOptions): Promise<void> => {
+const publishLog = async (
+    url: string, 
+    error: ErrorPayload, 
+    wrappedIn?: WrapperTypes, 
+    extraWrapper?: AdditionalWrapper, 
+    options?: PublisherOptions
+): Promise<void> => {
     const rbmq = new RabbitInstance();
     rbmq.conect(url);
     rbmq.on('connected', async (EventListener) => {
@@ -29,7 +35,10 @@ const publishLog = async (url: string, error: ErrorPayload, wrappedIn?: WrapperT
                 }
             }
         });
-        const message = wrappedIn.length !== 0 ? { [wrappedIn]: error  } : { message: error }
+        let message = wrappedIn.length !== 0 ? { [wrappedIn]: error  } : { message: error }
+        if (Object.entries(extraWrapper).length !== 0) {
+            Object.assign(message, { ...extraWrapper })
+        }
         await channel.bindQueue(targetQueue, exchange, targetRoutingKey);
         await channel.publish(exchange, targetRoutingKey, Buffer.from(JSON.stringify(message)));
         rbmq.setClosingState(true);

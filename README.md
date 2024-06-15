@@ -172,6 +172,11 @@ const logger = new filog({
 
 // set payload wrapper name if you like (optional)
 logger.setMessageWrapper("MyErrorPayload");
+// example if you have more requirement on message wrapper (optional)
+logger.setAdditionalWrapper({
+    task: 'create',
+    messageId: 'tx-9000',
+})
 
 // rest of your code
 ```
@@ -182,7 +187,10 @@ RabbitMQ service will see your payload as :
 {
     "MyErrorPayload": {
         // your payloads
-    }
+    },
+    // your additional wrapper
+    "task": "create",
+    "messageId": "tx-9000"
 }
 ```
 
@@ -192,7 +200,10 @@ If you don't specify any, it will look like this :
 {
     "message": {
         // your payloads
-    }
+    },
+    // your additional wrapper
+    "task": "create",
+    "messageId": "tx-9000"
 }
 ```
 
