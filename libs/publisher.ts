@@ -4,6 +4,7 @@ import { AdditionalWrapper, ErrorPayload, PublisherOptions, WrapperTypes } from 
 
 const publishLog = async (
     url: string, 
+    client_id: string,
     error: ErrorPayload, 
     wrappedIn?: WrapperTypes, 
     extraWrapper?: AdditionalWrapper, 
@@ -40,7 +41,7 @@ const publishLog = async (
             Object.assign(message, { ...extraWrapper })
         }
         await channel.bindQueue(targetQueue, exchange, targetRoutingKey);
-        await channel.publish(exchange, targetRoutingKey, Buffer.from(JSON.stringify(message)));
+        await channel.publish(exchange, targetRoutingKey, Buffer.from(JSON.stringify(message)), { headers: { client_id } });
         rbmq.setClosingState(true);
         await channel.close();
         await conn.close();
