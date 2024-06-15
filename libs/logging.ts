@@ -6,6 +6,7 @@
 
 import HttpClient from "./httpClient"
 import type { 
+    AdditionalWrapper,
     CustomErrorPayload,
     ErrorPayload, 
     EventCode, 
@@ -31,6 +32,7 @@ interface filog {
 class filog {
     private args: FilogInitArguments
     private wrappedIn: string
+    private additionalWrapper: object
     private publisherOpts: PublisherOptions
     /**
      * Create a 5log client application. The filog() function is a top-level function exported from 5log module
@@ -40,6 +42,7 @@ class filog {
    constructor(args: FilogInitArguments) {
         this.args = args
         this.wrappedIn = ''
+        this.additionalWrapper = {}
         this.publisherOpts
         this._init()
     }
@@ -98,10 +101,27 @@ class filog {
      * }
      * ```
      * 
-     * If you don't specify a wrapper name, filog will use the default wrapper name, which is `message`.
+     * If you don't specify a wrapper name, filog will use the default wrapper name, which is `payload`.
      */
     setMessageWrapper (name: string): void {
         this.wrappedIn = name
+    }
+    /**
+     * Adding additional message properties or wrappers to your message broker: If you have extra requirements 
+     * such as 'command' or 'messageOrigin', you can add them using this method.
+     *  
+     * #### Example
+     * 
+     * ```javascript
+     * logger.addMessageProperties({
+     *    task: 'create',
+     *    messageOrigin: 'any string or object',
+     *    assignTo: 'devTeam or QA'
+     * })
+     * ```
+     */
+    addMessageProperties (props: AdditionalWrapper): void {
+        this.additionalWrapper = { ...props }
     }
     /**
      * When using rabbitmq as your message broker, filog will set a default value on options like exchange type and queue configs.
