@@ -259,7 +259,7 @@ class filog {
             connector.send(error)
         }
         if (/^amqps?:\/\/[^\s\/$.?#].[^\s]*$/gi.test(transport[0].url) === true) {
-            publishLog(transport[0].url, error, this.wrappedIn, this.publisherOpts)
+            publishLog(transport[0].url, error, this.wrappedIn, this.additionalWrapper, this.publisherOpts)
         }
     }
 }
