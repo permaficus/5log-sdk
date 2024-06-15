@@ -172,8 +172,8 @@ const logger = new filog({
 
 // set payload wrapper name if you like (optional)
 logger.setMessageWrapper("MyErrorPayload");
-// example if you have more requirement on message wrapper (optional)
-logger.setAdditionalWrapper({
+// example if you have more requirement on message properties / object (optional)
+logger.addMessageProperties({
     task: 'create',
     messageId: 'tx-9000',
 })
@@ -198,7 +198,7 @@ If you don't specify any, it will look like this :
 
 ```yaml
 {
-    "message": {
+    "payload": {
         // your payloads
     },
     // your additional wrapper

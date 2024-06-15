@@ -35,7 +35,7 @@ const publishLog = async (
                 }
             }
         });
-        let message = wrappedIn.length !== 0 ? { [wrappedIn]: error  } : { message: error }
+        let message = wrappedIn.length !== 0 ? { [wrappedIn]: error  } : { payload: error }
         if (Object.entries(extraWrapper).length !== 0) {
             Object.assign(message, { ...extraWrapper })
         }
