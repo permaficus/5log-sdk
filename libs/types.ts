@@ -26,7 +26,7 @@ export type FilogInitObject = {
     client_id: string
     url: string
     logType: 'ANY' | LogLevels
-} & BrokerExchangeInterface
+}
 export type FilogTransportConfig = Array<FilogInitObject>
 export type WriteOptions = {
     verbose?: 'true' | 'false' | undefined
