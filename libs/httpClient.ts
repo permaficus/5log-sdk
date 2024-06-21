@@ -28,6 +28,14 @@ export default class HttpClient {
             method: 'POST',
             headers: { ...this.defaultHeaders, client_id: this.client_id},
             data: payload
+        }).then((response: any) => {
+            // handling error with 200 statusCode (graphQL)
+            if (response.data.errors) {
+                const { message, extensions } = response.data.errors[0];
+                delete extensions.stacktrace
+                console.error(new FilogError('GraphQL Error', extensions.code, { message, extensions }));
+                return;
+            }
         }).catch((error: any) => {
             if (error.code === 'ECONNREFUSED') {
                 console.log(chalk.redBright(`[5log-SDK] Error: Can not connect to ${error.config.url}`));
@@ -38,7 +46,15 @@ export default class HttpClient {
              * error.response on graphql is different than the normal http response. so we need to refactor this
              * in order not to confuse users
              */
-            console.error(new FilogError(error.message, error.response.data.code, error.response.data.errors[0]));
+            let apiErrorResponse: {[key: string]: any} = null
+            if (payload.hasOwnProperty('query') && payload.hasOwnProperty('variables')) {
+                apiErrorResponse = error.response.data.errors[0];
+                delete apiErrorResponse.locations
+                delete apiErrorResponse.extensions.stacktrace
+            } else {
+                apiErrorResponse = error.response.data
+            }
+            console.error(new FilogError(error.message, error.response.data.code, apiErrorResponse));
             return;
         })
     };
