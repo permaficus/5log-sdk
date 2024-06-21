@@ -22,6 +22,10 @@ export type ErrorPayload = {
     environment?: string
     errorDescription?: string | any
 } & CustomErrorPayload
+export type GraphQlQuery = {
+    query: string,
+    variables?: CustomErrorPayload
+}
 export type FilogInitObject = {
     client_id: string
     url: string
