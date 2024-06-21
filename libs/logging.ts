@@ -12,6 +12,7 @@ import type {
     EventCode, 
     FilogInitArguments, 
     FilogInitObject, 
+    GraphQlQuery, 
     LogLevels,
     LoggingOptions,
     PublisherOptions,
@@ -34,6 +35,8 @@ class filog {
     private wrappedIn: string
     private additionalWrapper: object
     private publisherOpts: PublisherOptions
+    private graphQuery: GraphQlQuery
+    private gqlVariableWrapper: string
     /**
      * Create a 5log client application. The filog() function is a top-level function exported from 5log module
      *
@@ -44,6 +47,8 @@ class filog {
         this.wrappedIn = ''
         this.additionalWrapper = {}
         this.publisherOpts
+        this.graphQuery = { query: null }
+        this.gqlVariableWrapper = null
         this._init()
     }
     /**
@@ -136,6 +141,31 @@ class filog {
      */
     setPublisherOptions (options: PublisherOptions): void {
         this.publisherOpts = { ...options }
+    }
+    /**
+     * A method to set GraphQL query string for mutation. Accept two arguments `query` and `variableWrapper`
+     * 
+     * #### Example:
+     * 
+     * ```javascript
+     * const queryString = `
+     *   mutation ($payload: payload) {
+     *      logging(payload: $payload) {
+     *          id
+     *      }
+     *   }`;
+     * 
+     * // invoking the method
+     * logger.setGraphQLQuery(queryString, 'payload');
+     * ```
+     * 
+     * 
+     */
+    setGraphQLQuery (query: string, variableWrapper?: string): void {
+        this.graphQuery = { 
+            query
+        }
+        if (variableWrapper) this.gqlVariableWrapper = variableWrapper
     }
     /**
      * PRIVATE
@@ -256,7 +286,14 @@ class filog {
         if (verbose === 'true') console.log(chalk.redBright(`\n${_errorDescription}\n`));
         if (/^https?:\/\/[^\s\/$.?#].[^\s]*$/gi.test(transport[0].url) === true) {
             const connector = new HttpClient(transport[0].client_id, transport[0].url);
-            connector.send(error)
+            if (this.graphQuery.query) {
+                this.graphQuery.variables = {
+                    ...this.gqlVariableWrapper ? { [this.gqlVariableWrapper]: { ...error } } : { ...error }
+                }
+                connector.send(this.graphQuery)
+            } else {
+                connector.send(error)
+            }
         }
         if (/^amqps?:\/\/[^\s\/$.?#].[^\s]*$/gi.test(transport[0].url) === true) {
             publishLog(transport[0].url, transport[0].client_id, error, this.wrappedIn, this.additionalWrapper, this.publisherOpts)
