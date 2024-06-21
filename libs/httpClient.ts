@@ -38,7 +38,13 @@ export default class HttpClient {
              * error.response on graphql is different than the normal http response. so we need to refactor this
              * in order not to confuse users
              */
-            console.error(new FilogError(error.message, error.response.data.code, error.response.data.errors[0]));
+            let apiErrorResponse: object = null
+            if (payload.hasOwnProperty('query') && payload.hasOwnProperty('variables')) {
+                apiErrorResponse = error.response.data.errors[0]
+            } else {
+                apiErrorResponse = error.response.data
+            }
+            console.error(new FilogError(error.message, error.response.data.code, apiErrorResponse));
             return;
         })
     };
