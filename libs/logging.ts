@@ -158,8 +158,7 @@ class filog {
      * // invoking the method
      * logger.setGraphQLQuery(queryString, 'payload');
      * ```
-     * 
-     * 
+     * For more documentation visit: https://github.com/permaficus/5log-sdk#readme
      */
     setGraphQLQuery (query: string, variableWrapper?: string): void {
         this.graphQuery = { 
