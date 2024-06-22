@@ -337,7 +337,7 @@ function trapMyError() {
     } catch(error) {
         logger.error(error, {
             // set your graphQL variables
-            payload: {
+            variables: {
                 timeStamp: Date.now()
                 // you're only need specify one variable here 
                 // because filog will compile it alongside logLevel 
