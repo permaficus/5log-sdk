@@ -328,7 +328,7 @@ const withoutWrapper = `
 // setGraphQLQuery accept two arguments, query and variableWrapper
 logger.setGraphQLQuery(withWrapper, 'payload')
 // if you dont use any wrapper, just leave it out
-logger.setGraphQLQuery(withourWrapper)
+logger.setGraphQLQuery(withoutWrapper)
 
 // test scenario
 function trapMyError() {
