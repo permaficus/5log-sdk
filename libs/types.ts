@@ -26,8 +26,13 @@ export type GraphQlQuery = {
     query: string,
     variables?: CustomErrorPayload
 }
+export type AuthSchemes = {
+    type: 'ApiKey' | 'Bearer',
+    name?: string,
+    value: string | string[]
+}
 export type FilogInitObject = {
-    client_id: string
+    auth?: AuthSchemes
     url: string
     logType: 'ANY' | LogLevels
 }

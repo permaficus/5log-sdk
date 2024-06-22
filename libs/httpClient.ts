@@ -2,20 +2,20 @@ import axios, { type AxiosInstance } from 'axios';
 import FilogError from './error';
 import * as pkgJson from '../package.json'
 import chalk from 'chalk'
-import { ErrorPayload, GraphQlQuery } from './types';
+import { AuthSchemes, ErrorPayload, GraphQlQuery } from './types';
 
 export default class HttpClient {
-    private client_id: string
+    private auth: AuthSchemes
     private defaultHeaders: object
     private httpClient: AxiosInstance
     private target: string
 
-    constructor(client_id: string, target: string) {
-        this.client_id = client_id
+    constructor(target: string, auth: AuthSchemes) {
+        this.auth = auth
         this.defaultHeaders = {
             'content-type': 'application/json',
             'accept': 'application/json',
-            'user-agent': `filog-client/${pkgJson.version}`
+            'user-agent': `filog-client/${pkgJson.version}`,
         }
         this.target = target
         this.httpClient = axios.create()
@@ -26,8 +26,13 @@ export default class HttpClient {
         await instance.httpClient({
             url: this.target,
             method: 'POST',
-            headers: { ...this.defaultHeaders, client_id: this.client_id},
-            data: payload
+            headers: { 
+                ...this.defaultHeaders, 
+                ...this.auth.type === 'ApiKey' ? { [this.auth.name]: this.auth.value } : {},
+                ...this.auth.type === 'Bearer' ? { 'Authorization': `Bearer...${this.auth.value}` } : {},
+            },
+            data: payload,
+            withCredentials: true
         }).then((response: any) => {
             // handling error with 200 statusCode (graphQL)
             if (response.data.errors) {
@@ -47,7 +52,7 @@ export default class HttpClient {
              * in order not to confuse users
              */
             let apiErrorResponse: {[key: string]: any} = null
-            if (payload.hasOwnProperty('query') && payload.hasOwnProperty('variables')) {
+            if (payload.hasOwnProperty('query') && payload.hasOwnProperty('variables') || error.response.data.errors) {
                 apiErrorResponse = error.response.data.errors[0];
                 delete apiErrorResponse.locations
                 delete apiErrorResponse.extensions.stacktrace

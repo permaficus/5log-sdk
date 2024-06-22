@@ -197,16 +197,17 @@ class filog {
     /**
      * private write
      */
-    private _write ({ logLevel, error, eventCode, printOut, payload }: 
+    private _write ({ logLevel, error, eventCode, printOut, payload, variables }: 
         { 
             logLevel: LogLevels
             error: Error, 
             eventCode?: EventCode,
             printOut?: boolean,
-            payload?: CustomErrorPayload
+            payload?: CustomErrorPayload,
+            variables?: CustomErrorPayload
         }
     ) {
-        if (!payload || Object.entries(payload).length === 0) {
+        if (!payload || Object.entries(payload).length === 0 || !variables || Object.entries(variables).length === 0) {
             payload = {
                 logTicket: Crypto.randomUUID(),
                 eventCode,
@@ -217,7 +218,8 @@ class filog {
         this.write({
             logLevel,
             errorDescription: error,
-            ...payload,
+            ...payload ? { ...payload } : {},
+            ...variables ? { ...variables } : {}
         }, {
             verbose: String(printOut) as WriteOptions["verbose"],
             originalError: error
@@ -284,7 +286,7 @@ class filog {
 
         if (verbose === 'true') console.log(chalk.redBright(`\n${_errorDescription}\n`));
         if (/^https?:\/\/[^\s\/$.?#].[^\s]*$/gi.test(transport[0].url) === true) {
-            const connector = new HttpClient(transport[0].client_id, transport[0].url);
+            const connector = new HttpClient(transport[0].url, transport[0].auth);
             if (this.graphQuery.query) {
                 this.graphQuery.variables = {
                     ...this.gqlVariableWrapper ? { [this.gqlVariableWrapper]: { ...error } } : { ...error }
@@ -295,7 +297,14 @@ class filog {
             }
         }
         if (/^amqps?:\/\/[^\s\/$.?#].[^\s]*$/gi.test(transport[0].url) === true) {
-            publishLog(transport[0].url, transport[0].client_id, error, this.wrappedIn, this.additionalWrapper, this.publisherOpts)
+            publishLog(
+                transport[0].url, 
+                transport[0].auth,
+                error, 
+                this.wrappedIn, 
+                this.additionalWrapper, 
+                this.publisherOpts
+            )
         }
     }
 }

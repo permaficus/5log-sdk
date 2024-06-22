@@ -1,10 +1,10 @@
 import { RabbitInstance } from "./amqp";
 import chalk from "chalk";
-import { AdditionalWrapper, ErrorPayload, PublisherOptions, WrapperTypes } from "./types";
+import { AdditionalWrapper, AuthSchemes, ErrorPayload, PublisherOptions, WrapperTypes } from "./types";
 
 const publishLog = async (
     url: string, 
-    client_id: string,
+    auth: AuthSchemes,
     error: ErrorPayload, 
     wrappedIn?: WrapperTypes, 
     extraWrapper?: AdditionalWrapper, 
@@ -41,7 +41,7 @@ const publishLog = async (
             Object.assign(message, { ...extraWrapper })
         }
         await channel.bindQueue(targetQueue, exchange, targetRoutingKey);
-        await channel.publish(exchange, targetRoutingKey, Buffer.from(JSON.stringify(message)), { headers: { client_id } });
+        await channel.publish(exchange, targetRoutingKey, Buffer.from(JSON.stringify(message)), { headers: { [auth.name]: auth.value } });
         rbmq.setClosingState(true);
         await channel.close();
         await conn.close();

@@ -27,9 +27,25 @@ const log = new filog(
         },
         environment: 'development',
         transports: [
-            { client_id: '{your-client-id}', url: 'https://logs.devops.io/api/v1/logs', logType: 'ANY' }
+            { 
+                auth: { 
+                    name: 'x-client-id', 
+                    type: 'ApiKey', 
+                    value: 'fg_jlad84djkadfnjc84=' 
+                }, 
+                url: 'https://logs.devops.io/api/v1/logs', 
+                logType: 'ANY' 
+            }
             // if you want to separate log into different api service you can add more options
-            { client_id: '{your-client-id}', url: 'https://error.devops.io/api/v1/logs', logType: 'ERROR' }
+            { 
+                auth: { 
+                    name: 'x-client-id', 
+                    type: 'ApiKey', 
+                    value: 'fg_379asdajsnd84hdaf=' 
+                }, 
+                url: 'https://error.devops.io/api/v1/logs', 
+                logType: 'ERROR' 
+            }
         ]
     }
 )
@@ -142,9 +158,9 @@ const log = new filog(
         },
         environment: 'development',
         transports: [
-            { client_id: '{your-client-id}', url: 'https://logs.devops.io/api/v1/logs', logType: 'ANY' }
+            { auth: { name: 'x-client-id', type: 'ApiKey', value: 'fg_jlad84djkadfnjc84=' }, url: 'https://logs.devops.io/api/v1/logs', logType: 'ANY' }
             // if you want to separate log into different api service you can add more options
-            { client_id: '{your-client-id}', url: 'https://error.devops.io/api/v1/logs', logType: 'ERROR' }
+            { auth: { name: 'x-client-id', type: 'ApiKey', value: 'fg_379asdajsnd84hdaf=' }, url: 'https://error.devops.io/api/v1/logs', logType: 'ERROR' }
         ]
     }
 )
@@ -166,7 +182,15 @@ import { filog } from '5log-sdk';
 
 const logger = new filog({
     transports: [
-        { client_id: "your-client-id", url: "amqp://username:password@host:5672/vhost?heartbeat=5&connection_timout=1000#{exchange-name}:{queue-name}:{routekey}", logType: "any"}
+        { 
+            auth: { 
+                name: 'x-client-id', 
+                type: 'ApiKey', 
+                value: 'fg_379asdajsnd84hdaf=' 
+            }
+            , url: "amqp://username:password@host:5672/vhost?heartbeat=5&connection_timout=1000#exchange-name:queue-name:routekey", 
+            logType: "any"
+        }
     ]
 })
 
@@ -237,7 +261,15 @@ import { filog } from '5log-sdk';
 
 const logger = new filog({
     transports: [
-        { client_id: "your-client-id", url: "amqp://username:password@host:5672/vhost?heartbeat=5&connection_timout=1000#exchange-name:queue-name:routekey", logType: "any"}
+        { 
+            auth: { 
+                name: 'x-client-id', 
+                type: 'ApiKey', 
+                value: 'fg_379asdajsnd84hdaf=' 
+            }, 
+            url: "amqp://username:password@host:5672/vhost?heartbeat=5&connection_timout=1000#exchange-name:queue-name:routekey", 
+            logType: "any"
+        }
     ]
 })
 
@@ -264,7 +296,11 @@ import { filog } from '5log-sdk';
 const logger = new filog({
     transports: [
         {
-            client_id: 'your-client-id',
+            auth: { 
+                name: 'x-client-id', 
+                type: 'ApiKey', 
+                value: 'fg_379asdajsnd84hdaf=' 
+            },
             url: 'http(s)://<hostname>/gql',
             logtype: 'any'
         }
