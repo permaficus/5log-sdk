@@ -187,8 +187,8 @@ const logger = new filog({
                 name: 'x-client-id', 
                 type: 'ApiKey', 
                 value: 'fg_379asdajsnd84hdaf=' 
-            }
-            , url: "amqp://username:password@host:5672/vhost?heartbeat=5&connection_timout=1000#exchange-name:queue-name:routekey", 
+            }, 
+            url: "amqp://username:password@host:5672/vhost?heartbeat=5&connection_timout=1000#exchange-name:queue-name:routekey", 
             logType: "any"
         }
     ]
