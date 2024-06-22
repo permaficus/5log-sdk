@@ -157,7 +157,7 @@ log.errorListener()
 
 #### Filog Transport Method
 
-Currently, Filog only supports the HTTP transport method and RabbitMQ as a message broker. In the future, it will also support the use of GraphQL and Apache Kafka.
+Currently, Filog only supports the HTTP transport method and RabbitMQ as a message broker. In the future, it will also support the use of Apache Kafka.
 
 Example of using RabbitMQ:
 
@@ -237,7 +237,7 @@ import { filog } from '5log-sdk';
 
 const logger = new filog({
     transports: [
-        { client_id: "your-client-id", url: "amqp://username:password@host:5672/vhost?heartbeat=5&connection_timout=1000#{exchange-name}:{queue-name}:{routekey}", logType: "any"}
+        { client_id: "your-client-id", url: "amqp://username:password@host:5672/vhost?heartbeat=5&connection_timout=1000#exchange-name:queue-name:routekey", logType: "any"}
     ]
 })
 
@@ -254,7 +254,67 @@ logger.setPublisherOpts({
 // rest of your code
 ```
 
+#### GraphQL
 
+Below is an example of how to configure Filog to send logs to your GraphQL service.
+
+```javascript
+import { filog } from '5log-sdk';
+// initiate new filog
+const logger = new filog({
+    transports: [
+        {
+            client_id: 'your-client-id',
+            url: 'http(s)://<hostname>/gql',
+            logtype: 'any'
+        }
+    ]
+})
+
+// Mutation Query. We wrapped our error payload with PAYLOAD
+const withWrapper = `
+    mutation ($payload: MutationInputType) {
+        storingLogs(payload: $payload) {
+            logLevel,
+            errorDescription
+        }
+    }
+`
+// Mutation query without using any wrapper
+const withoutWrapper = `
+    mutation($logLevel: String!, $errorDescription: String!, $timeStamp: Date!) {
+        storingLogs(logLevel: $logLevel, errorDescription: $errorDescription, timeStamp: $timeStamp) {
+            logLevel,
+            errorDescription
+        }
+    }
+`
+// setGraphQLQuery accept two arguments, query and variableWrapper
+logger.setGraphQLQuery(withWrapper, 'payload')
+// if you dont use any wrapper, just leave it out
+logger.setGraphQLQuery(withourWrapper)
+
+// test scenario
+function trapMyError() {
+    try {
+        throw new Error(`This is a trap!`)
+    } catch(error) {
+        logger.error(error, {
+            // set your graphQL variables
+            payload: {
+                timeStamp: Date.now()
+                // you're only need specify one variable here 
+                // because filog will compile it alongside logLevel 
+                // and errorDescription as a default variable
+            }
+        })
+    }
+}
+```
+
+>[!NOTE]
+>
+> Filog will send default data / variable such as `logLevel`, `errorDescription`, `source` and `environment`. The last two variable will exist if you set it on filog init
 
 #### In Project Example
 
