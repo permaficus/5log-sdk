@@ -27,7 +27,7 @@ export type GraphQlQuery = {
     variables?: CustomErrorPayload
 }
 export type AuthSchemes = {
-    type: 'ApiKey' | 'Bearer',
+    type: 'ApiKey' | 'BasicAuth' | 'Cookie',
     name?: string,
     value: string | string[]
 }
