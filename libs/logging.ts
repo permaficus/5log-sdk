@@ -67,7 +67,7 @@ class filog {
      *    environment: 'development',
      *    transports: [
      *      { 
-     *          client_id: 'your-client-id', 
+     *          auth: { name: 'x-client-id', type: 'ApiKey', value: 'fg_84jnasd883hdad003' }, 
      *          url: 'https://logs.devops.io/api/v1/logs',
      *          logType: 'ANY'
      *      }
@@ -207,7 +207,7 @@ class filog {
             variables?: CustomErrorPayload
         }
     ) {
-        if (!payload || Object.entries(payload).length === 0 || !variables || Object.entries(variables).length === 0) {
+        if (!payload || Object.entries(payload).length === 0 && !variables || Object.entries(variables).length === 0) {
             payload = {
                 logTicket: Crypto.randomUUID(),
                 eventCode,
@@ -285,6 +285,7 @@ class filog {
         }
 
         if (verbose === 'true') console.log(chalk.redBright(`\n${_errorDescription}\n`));
+
         if (/^https?:\/\/[^\s\/$.?#].[^\s]*$/gi.test(transport[0].url) === true) {
             const connector = new HttpClient(transport[0].url, transport[0].auth);
             if (this.graphQuery.query) {
