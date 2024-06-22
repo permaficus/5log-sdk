@@ -1,4 +1,4 @@
-import axios, { type AxiosInstance } from 'axios';
+import axios, { type AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import FilogError from './error';
 import * as pkgJson from '../package.json'
 import chalk from 'chalk'
@@ -29,7 +29,8 @@ export default class HttpClient {
             headers: { 
                 ...this.defaultHeaders, 
                 ...this.auth.type === 'ApiKey' ? { [this.auth.name]: this.auth.value } : {},
-                ...this.auth.type === 'Bearer' ? { 'Authorization': `Bearer...${this.auth.value}` } : {},
+                ...this.auth.type === 'BasicAuth' ? { 'Authorization': this.auth.value } : {},
+                ...this.auth.type === 'Cookie' ? { 'Cookie': `${this.auth.name}=${this.auth.value}`} : {}
             },
             data: payload,
             withCredentials: true
