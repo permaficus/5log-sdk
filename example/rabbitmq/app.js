@@ -9,9 +9,17 @@ const logger = new filog({
         module_name: 'index'
     },
     transports: [
-        { client_id: 'rabbitmq-user', url: 'amqp://filog:filog@host:5672#my-exchange:my-queue:my-routekey', logType: 'ANY' }
+        { 
+            auth: {
+                type: 'ApKey',
+                name: 'x-logger-auth',
+                value: 'fg_klasd82308hja@ASDf28ndjnd'
+            }, 
+            url: 'amqp://filog:filog@host:5672#my-exchange:my-queue:my-routekey', 
+            logType: 'ANY' 
+        }
     ]
-})
+});
 
 // set message wrapper property name
 logger.setMessageWrapper('MyErrorMessage');
@@ -25,7 +33,7 @@ logger.setPublisherOptions({
         "x-queue-type": 'classic',
         "x-dead-letter-exchange": 'my-exchange', // same as your exchange name
     }
-})
+});
 
 function trapMyError () {
     try {
@@ -39,4 +47,6 @@ function trapMyError () {
             }
         })
     }
-}
+};
+
+trapMyError();
