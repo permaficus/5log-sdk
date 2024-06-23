@@ -10,10 +10,18 @@ const logger = new filog(
         },
         environment: 'example',
         transports: [
-            { client_id: 'express-id', url: 'http://logs.devops.local/api/v1/logs', logType: 'ANY' }
+            { 
+                auth: {
+                    type: 'ApKey',
+                    name: 'x-logger-auth',
+                    value: 'fg_klasd82308hja@ASDf28ndjnd'
+                }, 
+                url: 'http://logs.devops.local/api/v1/logs', 
+                logType: 'ANY' 
+            }
         ]
     }
-)
+);
 // add error listener
 logger.errorListener()
 // initiate connection to target url
@@ -32,4 +40,4 @@ client({
         logTicket: Crypto.randomUUID(),
         destination: err.config.url
     }, { verbose: 'true', originalError: err });
-})
+});

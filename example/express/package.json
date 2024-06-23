@@ -12,7 +12,7 @@
   "description": "",
   "dependencies": {
     "express": "^4.19.2",
-    "5log-sdk": "^0.5.10"
+    "5log-sdk": "^0.6.40"
   },
   "devDependencies": {
     "@types/express": "^4.17.21"
