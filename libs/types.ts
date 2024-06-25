@@ -78,7 +78,7 @@ export type AdditionalWrapper = {
     task?: string
     [key: string]: any
 }
-export type ExchangeType = 'direct' | 'fanout' | 'headers' | 'topics'
+export type ExchangeType = 'direct' | 'fanout' | 'headers' | 'topic'
 export type ExchangeArgument = {
     'alternate-exchange'?: string | string[] | null
 }
