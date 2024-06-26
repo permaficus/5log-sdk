@@ -43,7 +43,7 @@ class RabbitInstance extends EventEmitter {
         return this.exchangeConfig
     }
 
-    conect = async (url?: string): Promise<void> => {
+    connect = async (url?: string): Promise<void> => {
         /**
          * example amqp uri
          * amqp(s)://username:password@host:5672/vhost?heartbeat=5&connection_timeout=10000#exchange:queue:routingkey
