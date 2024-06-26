@@ -11,7 +11,7 @@ const publishLog = async (
     options?: PublisherOptions
 ): Promise<void> => {
     const rbmq = new RabbitInstance();
-    rbmq.conect(url);
+    rbmq.connect(url);
     rbmq.on('connected', async (EventListener) => {
         const { channel, conn } = EventListener;
         const targetQueue = rbmq.getExchangeConfig.queue;
